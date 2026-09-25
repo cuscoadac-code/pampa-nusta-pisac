@@ -1,151 +1,165 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { 
-  MapPin, 
-  Navigation, 
-  Clock, 
-  Mountain, 
-  Car, 
-  Eye, 
-  ChevronRight, 
-  Compass 
-} from 'lucide-react';
+import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
+import { MapPin, Navigation, MessageCircle, Zap } from 'lucide-react';
+import { InterdimensionalJourney } from './InterdimensionalJourney';
+import { useTranslation } from 'react-i18next';
 
-interface LocationSectionProps {
-  onOpenJourney: () => void;
-}
-
-export const LocationSection: React.FC<LocationSectionProps> = ({ onOpenJourney }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLElement>(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
-      }
-    };
-  }, []);
+export const LocationSection: React.FC = () => {
+  const { t } = useTranslation();
+  const [showJourney, setShowJourney] = useState(false);
+  const latitude = -13.407585;
+  const longitude = -71.836324;
+  const locationName = "Santuario Ecológico Pampa Ñusta, Pisac";
+  const googleMapsUrl = `https://maps.google.com/?q=${latitude},${longitude}`;
+  
+  const whatsappMessage = `¡Hola! Aquí tienes la ubicación exacta del ${locationName}:\n\n${googleMapsUrl}`;
+  const whatsappShareLink = `https://api.whatsapp.com/send?text=${encodeURIComponent(whatsappMessage)}`;
 
   return (
-    <section 
-      id="como-llegar" 
-      ref={sectionRef}
-      className="relative w-full py-24 bg-gradient-to-b from-[#0a0a0a] to-[#0a1610] text-sadhana-sand overflow-hidden font-sans"
-    >
-      {/* Decorative background elements */}
-      <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]"></div>
-      <div className="absolute top-1/4 -right-64 w-96 h-96 bg-sadhana-primary rounded-full blur-[150px] opacity-10"></div>
-      <div className="absolute bottom-1/4 -left-64 w-96 h-96 bg-sadhana-orange rounded-full blur-[150px] opacity-10"></div>
-
-      <div className="max-w-7xl mx-auto px-6 relative z-10">
+    <>
+    <section id="ubicacion" className="relative py-24 bg-sadhana-dark text-white border-t border-white/5">
+      <div className="max-w-7xl mx-auto px-6 md:px-12">
         
         {/* Header */}
-        <div className={`flex flex-col items-center text-center mb-20 transition-all duration-1000 transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`}>
-          <div className="flex items-center gap-3 mb-4 text-sadhana-primary">
-            <MapPin size={24} />
-            <h2 className="text-4xl md:text-6xl font-cinzel tracking-widest text-white uppercase">
-              Cómo Llegar
-            </h2>
-            <MapPin size={24} />
+        <div className="mb-12 text-center md:text-left">
+          <div className="flex items-center justify-center md:justify-start gap-3 mb-4">
+            <span className="text-[10px] md:text-xs uppercase tracking-[0.3em] text-sadhana-primary font-bold">
+              04 — {t('location.subtitle')}
+            </span>
           </div>
-          
-          <p className="text-xl md:text-2xl text-sadhana-sand/80 font-light tracking-wide mb-8 max-w-2xl">
-            Sector Intihuatana s/n, Pisac, Valle Sagrado, Cusco, Perú
-          </p>
-          
-          <div className="flex flex-wrap justify-center gap-4 text-sm md:text-base">
-            <div className="flex items-center gap-2 px-6 py-2 rounded-full border border-sadhana-primary/30 bg-sadhana-dark/20 backdrop-blur-sm">
-              <Mountain size={18} className="text-sadhana-primary" />
-              <span className="font-medium tracking-wider">3,347 m.s.n.m.</span>
-            </div>
-            <div className="flex items-center gap-2 px-6 py-2 rounded-full border border-sadhana-orange/30 bg-sadhana-dark/20 backdrop-blur-sm">
-              <Navigation size={18} className="text-sadhana-orange" />
-              <span className="font-medium tracking-wider">-13.4225, -71.8488</span>
-            </div>
-          </div>
+          <h2 className="text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-tight text-white drop-shadow-md uppercase">
+            {t('location.title')}
+          </h2>
         </div>
 
-        {/* Separator */}
-        <div className="flex items-center justify-center w-full mb-20 opacity-30">
-          <div className="h-[1px] w-1/4 bg-gradient-to-r from-transparent to-sadhana-sand"></div>
-          <Compass size={24} className="mx-4 text-sadhana-sand animate-[spin_10s_linear_infinite]" />
-          <div className="h-[1px] w-1/4 bg-gradient-to-l from-transparent to-sadhana-sand"></div>
-        </div>
-
-        {/* Info Columns */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
-          {/* Card 1 */}
-          <div className={`p-8 rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-md hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-2 group ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`} style={{ transitionDelay: '200ms' }}>
-            <div className="w-14 h-14 rounded-full bg-sadhana-dark/50 flex items-center justify-center mb-6 border border-sadhana-primary/20 group-hover:border-sadhana-primary/50 transition-colors">
-              <Clock size={28} className="text-sadhana-primary" />
-            </div>
-            <h3 className="text-2xl font-cinzel text-white mb-4 tracking-wider">Desde Cusco</h3>
-            <p className="text-sadhana-sand/70 leading-relaxed text-lg font-light">
-              1h 30min por carretera asfaltada. <br/>
-              <span className="text-sadhana-sand mt-2 block">Ruta: Cusco <ChevronRight size={14} className="inline opacity-50"/> Ccorao <ChevronRight size={14} className="inline opacity-50"/> Pisac <ChevronRight size={14} className="inline opacity-50"/> Pampa Ñusta</span>
-            </p>
-          </div>
-
-          {/* Card 2 */}
-          <div className={`p-8 rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-md hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-2 group ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`} style={{ transitionDelay: '400ms' }}>
-            <div className="w-14 h-14 rounded-full bg-sadhana-dark/50 flex items-center justify-center mb-6 border border-sadhana-orange/20 group-hover:border-sadhana-orange/50 transition-colors">
-              <Navigation size={28} className="text-sadhana-orange" />
-            </div>
-            <h3 className="text-2xl font-cinzel text-white mb-4 tracking-wider">Desde Ollantaytambo</h3>
-            <p className="text-sadhana-sand/70 leading-relaxed text-lg font-light">
-              45 min por el Valle Sagrado. Ruta escénica siguiendo el río Vilcanota a través de paisajes inolvidables.
-            </p>
-          </div>
-
-          {/* Card 3 */}
-          <div className={`p-8 rounded-2xl border border-white/5 bg-white/[0.02] backdrop-blur-md hover:bg-white/[0.04] transition-all duration-500 hover:-translate-y-2 group ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-12'}`} style={{ transitionDelay: '600ms' }}>
-            <div className="w-14 h-14 rounded-full bg-sadhana-dark/50 flex items-center justify-center mb-6 border border-white/20 group-hover:border-white/50 transition-colors">
-              <Car size={28} className="text-white" />
-            </div>
-            <h3 className="text-2xl font-cinzel text-white mb-4 tracking-wider">Transporte</h3>
-            <p className="text-sadhana-sand/70 leading-relaxed text-lg font-light">
-              Colectivos desde Cusco (S/. 10), taxi privado, o servicio de recojo coordinado directamente con nosotros.
-            </p>
-          </div>
-        </div>
-
-        {/* Hero Action */}
-        <div className={`relative w-full rounded-3xl overflow-hidden border border-white/10 group cursor-pointer ${isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'} transition-all duration-1000 delay-700`} onClick={onOpenJourney}>
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent z-10 pointer-events-none"></div>
-          {/* Dark fallback background */}
-          <div className="absolute inset-0 bg-[#0f1110] z-0"></div>
+        {/* Map and Info Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
           
-          <div className="relative z-20 flex flex-col items-center justify-center py-32 px-6 text-center">
-            <button 
-              className="group/btn relative flex items-center gap-4 px-12 py-6 bg-gradient-to-r from-sadhana-primary to-[#0f4d25] rounded-full overflow-hidden shadow-[0_0_40px_rgba(0,174,66,0.3)] hover:shadow-[0_0_60px_rgba(0,174,66,0.5)] transition-all duration-500 hover:scale-105"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-sadhana-orange to-sadhana-primary opacity-0 group-hover/btn:opacity-100 transition-opacity duration-500"></div>
-              <Eye size={28} className="relative z-10 text-white group-hover/btn:animate-pulse" />
-              <span className="relative z-10 text-2xl font-cinzel text-white tracking-widest uppercase">
-                Ver el Lugar
+          {/* Map Container */}
+          <div className="lg:col-span-8 rounded-3xl overflow-hidden border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)] relative h-[400px] md:h-[500px] group bg-black">
+            {/* Overlay hint before interaction */}
+            <div className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center transition-opacity duration-500 group-hover:opacity-0 bg-sadhana-dark/20">
+              <span className="bg-black/50 text-white backdrop-blur-md px-4 py-2 rounded-full text-xs font-mono tracking-widest uppercase font-bold border border-white/20">
+                Mapa Satelital Interactivo
               </span>
-            </button>
-            <p className="mt-8 text-xl text-sadhana-sand/80 font-light tracking-wide group-hover:text-white transition-colors duration-300">
-              Experiencia inmersiva de llegada al santuario
-            </p>
-          </div>
-        </div>
+            </div>
 
+            <iframe 
+              src={`https://maps.google.com/maps?q=${latitude},${longitude}&t=k&z=17&ie=UTF8&iwloc=&output=embed`}
+              width="100%" 
+              height="100%" 
+              style={{ border: 0 }} 
+              allowFullScreen 
+              loading="lazy" 
+              referrerPolicy="no-referrer-when-downgrade"
+              className="absolute inset-0 filter grayscale contrast-125 opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-1000"
+              title="Ubicación Pampa Ñusta"
+            ></iframe>
+          </div>
+
+          {/* Info Card */}
+          <div className="lg:col-span-4 bg-white/5 backdrop-blur-2xl border border-white/10 rounded-3xl p-8 flex flex-col justify-between h-full min-h-[400px] shadow-2xl">
+            <div>
+              <div className="w-12 h-12 bg-sadhana-primary/20 rounded-full flex items-center justify-center mb-6 shadow-inner border border-sadhana-primary/30">
+                <MapPin className="w-6 h-6 text-sadhana-primary" />
+              </div>
+              <h3 className="text-2xl font-black tracking-tight text-white mb-2">
+                Comunidad de Maska
+              </h3>
+              <p className="text-sadhana-sand/80 font-medium text-sm mb-6 leading-relaxed">
+                {t('location.desc')}
+              </p>
+
+              <div className="space-y-4 mb-8 bg-black/20 p-4 rounded-xl border border-white/5">
+                <div className="flex items-start gap-4">
+                  <Navigation className="w-5 h-5 text-sadhana-primary shrink-0 mt-0.5 animate-pulse" />
+                  <div>
+                    <span className="block text-[9px] font-mono text-sadhana-sand/60 uppercase tracking-widest mb-1">Coordenadas Exactas</span>
+                    <span className="font-mono text-sm text-white font-bold">{latitude}, {longitude}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+
+              {/* ── VER EL LUGAR (Viaje Interdimensional) ── */}
+              <button
+                onClick={() => setShowJourney(true)}
+                className="w-full py-4 px-6 rounded-xl text-white font-black text-xs tracking-widest uppercase flex items-center justify-center gap-3 transition-all shadow-lg"
+                style={{
+                  background: 'linear-gradient(135deg, #0d4a1f, #1a2e50, #2d1a4a)',
+                  border: '1px solid rgba(74,222,128,0.45)',
+                  boxShadow: '0 0 22px rgba(74,222,128,0.25)',
+                  animation: 'pulse-glow-loc 2.5s ease-in-out infinite',
+                }}
+              >
+                <Zap className="w-4 h-4" style={{ color: '#4ade80' }} />
+                <span style={{ background: 'linear-gradient(90deg,#4ade80,#fbbf24)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                  {t('location.view_place')}
+                </span>
+              </button>
+
+              <a 
+                href={googleMapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-4 px-6 rounded-xl bg-white hover:bg-sadhana-primary text-sadhana-dark hover:text-white font-sans font-black text-xs tracking-widest uppercase flex items-center justify-center gap-3 transition-all shadow-lg"
+              >
+                <span>{t('location.maps')}</span>
+                <Navigation className="w-4 h-4" />
+              </a>
+
+              <a 
+                href={whatsappShareLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-4 px-6 rounded-xl bg-[#25D366]/20 hover:bg-[#25D366] text-white font-sans font-black text-xs tracking-widest uppercase flex items-center justify-center gap-3 transition-all border border-[#25D366]/30 shadow-lg group"
+              >
+                <span>{t('location.whatsapp')}</span>
+                <MessageCircle className="w-4 h-4 group-hover:scale-110 transition-transform" />
+              </a>
+            </div>
+            
+            {/* Alianza del Ayllu */}
+            <div className="mt-8 pt-6 border-t border-white/10">
+              <span className="block text-[10px] font-mono text-sadhana-primary uppercase tracking-[0.2em] font-bold mb-3">
+                Alianza del Ayllu
+              </span>
+              <div className="bg-black/30 rounded-2xl p-4 border border-white/5 flex flex-col gap-3">
+                <h4 className="text-white font-bold text-sm">Hospedaje Medicina Wallparisonqo</h4>
+                <p className="text-sadhana-sand/70 text-xs leading-relaxed">
+                  Refugio aliado para tu inmersión y dietas, ubicado en el corazón energético del valle.
+                </p>
+                <a 
+                  href="https://maps.app.goo.gl/rcQ53jY81aDfykQo7"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sadhana-primary text-xs font-bold hover:text-white transition-colors mt-1"
+                >
+                  <MapPin className="w-3 h-3" />
+                  <span>Ver Hospedaje en Google Maps</span>
+                </a>
+              </div>
+            </div>
+          </div>
+
+        </div>
       </div>
     </section>
+
+    {/* Journey portal */}
+    {showJourney && createPortal(
+      <InterdimensionalJourney onClose={() => setShowJourney(false)} />,
+      document.body
+    )}
+
+    <style>{`
+      @keyframes pulse-glow-loc {
+        0%,100% { box-shadow: 0 0 22px rgba(74,222,128,0.25); }
+        50%      { box-shadow: 0 0 36px rgba(74,222,128,0.55); }
+      }
+    `}</style>
+    </>
   );
 };

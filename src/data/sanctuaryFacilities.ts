@@ -4,6 +4,27 @@ export interface SanctuaryFacilityService {
   targetAudience: string;
 }
 
+export interface SanctuaryProjectRoadmap {
+  phase: string;
+  title: string;
+  description: string;
+  status: 'completed' | 'in-progress' | 'planned';
+}
+
+export interface SanctuaryProjectBenefit {
+  icon: 'leaf' | 'globe' | 'heart' | 'trending-up' | 'shield' | 'award';
+  title: string;
+  description: string;
+}
+
+export interface SanctuaryFacilityCustomSection {
+  title: string;
+  type: 'text' | 'taxonomy' | 'highlight';
+  content?: string;
+  bullets?: string[];
+  metrics?: { label: string; value: string }[];
+}
+
 export interface SanctuaryFacility {
   id: string;
   name: string;
@@ -19,6 +40,16 @@ export interface SanctuaryFacility {
   fullDesc: string;
   infrastructureDetails: string[];
   servicesOffered: SanctuaryFacilityService[];
+  
+  // New Professional / Research Fields
+  neuromarketingHook: string;
+  researchObjectives: string[];
+  projectBudget: string;
+  roadmap: SanctuaryProjectRoadmap[];
+  scope: string;
+  benefits: SanctuaryProjectBenefit[];
+  customSections?: SanctuaryFacilityCustomSection[];
+
   capacity: string;
   schedule: string;
   videoTimestamp: string;
@@ -27,208 +58,283 @@ export interface SanctuaryFacility {
   accentColor: string;
 }
 
-export const PAMPA_NUSTA_FACILITIES: SanctuaryFacility[] = [
-  {
-    id: 'wachuma-wasi',
-    name: 'Domo Geodésico & Banco Genético de la Wachuma',
-    quechuaName: 'Wachuma Wasi · Templo del Cactus Sagrado',
-    category: 'Conservación Botánica & Etnobotánica',
-    tag: 'Banco Genético Central',
-    altitude: '3,347 m.s.n.m.',
-    coordinates: { pitch: -6, yaw: 18 },
-    shortDesc: 'Invernadero geodésico bioclimático con más de 40 linajes madre de Trichocereus pachanoi y peruvianus aclimatados.',
-    fullDesc: 'El corazón botánico de Pampa Ñusta. Un domo geodésico de arquitectura bioclimática pasiva que alberga la mayor colección viva de cactus sagrado Wachuma de la cuenca del Vilcanota. Diseñado para emular el microclima de quebrada andina con sustratos minerales volcánicos, ventilación cenital y captación térmica diurna para proteger a los linajes madre de las heladas nocturnas.',
-    infrastructureDetails: [
-      'Estructura geodésica de madera certificada con cubierta de policarbonato alveolar UV',
-      'Más de 40 linajes madre identificados taxonómica y genéticamente',
-      'Sistema de sustrato multicapa con piedra pómez, zeolita y humus de bosque andino',
-      'Banco de propagación vegetativa para reintroducción ecológica en laderas secas'
-    ],
-    servicesOffered: [
-      {
-        title: 'Visitas Guiadas de Etnobotánica Sagrada',
-        description: 'Recorrido educativo de 90 minutos con botánicos locales sobre historia, taxonomía y rol cultural de la Wachuma en las civilizaciones preincas.',
-        targetAudience: 'Investigadores, botánicos, estudiantes y viajeros conscientes'
-      },
-      {
-        title: 'Programa de Apadrinamiento de Linajes Madre',
-        description: 'Adopción simbólica de un cactus centenario para financiar su cuidado, nutrición orgánica y estudio taxonómico con certificado oficial.',
-        targetAudience: 'Mecenas y guardianes de la biodiversidad'
-      },
-      {
-        title: 'Talleres de Propagación y Resiliencia Cactácea',
-        description: 'Aprende las técnicas de corte, cicatrizado, enraizado y cuidado de cactáceas andinas para jardines xerófitos y biohuertos.',
-        targetAudience: 'Horticultores y aficionados a la botánica'
-      }
-    ],
-    capacity: '25 personas por grupo',
-    schedule: 'Martes a Domingo: 09:00 - 17:00 hrs',
-    videoTimestamp: '01:15',
-    videoTimeSeconds: 75,
-    imageUrl: '/facilities/domo_geodesico.jpg',
-    accentColor: 'emerald'
-  },
-  {
-    id: 'arca-semillas',
-    name: 'Arca de Semillas Andinas & Laboratorio Vivo',
-    quechuaName: 'Muru Muyu Kawsay · Arca de Biodiversidad',
-    category: 'Soberanía Alimentaria & Agroecología',
-    tag: 'Custodia de Germoplasma',
-    altitude: '3,330 m.s.n.m.',
-    coordinates: { pitch: 12, yaw: -65 },
-    shortDesc: 'Santuario de germoplasma con más de 200 variedades nativas de maíz sagrado, papas andinas, quinua y kiwicha.',
-    fullDesc: 'Construido como una bóveda bioclimática de adobe y arcilla curada, el Arca de Semillas custodia el patrimonio genético de los Andes. Conserva variedades ancestrales de maíces policromos, tubérculos nativos de altura y granos sagrados, almacenados en vasijas de arcilla selladas con cera de abeja natural que previenen plagas sin un solo gramo de agroquímicos.',
-    infrastructureDetails: [
-      'Cámaras de secado tradicional en sombra con corrientes de aire cordillerano',
-      'Más de 200 accesiones de semillas nativas documentadas con origen comunal',
-      'Vasijas de arcilla local y contenedores de vidrio protegidos de la radiación',
-      'Mesa de cernido, selección manual y pruebas de germinación en vivo'
-    ],
-    servicesOffered: [
-      {
-        title: 'Círculos de Trueque de Semillas (Chhalay)',
-        description: 'Encuentros mensuales donde agricultores locales y custodios foráneos intercambian semillas nativas bajo el principio del Ayni.',
-        targetAudience: 'Comunidades campesinas, agricultores agroecológicos y huertos urbanos'
-      },
-      {
-        title: 'Talleres de Manejo y Cosecha Limpia',
-        description: 'Formación práctica en métodos andinos de conservación, desgranado, secado en sombra y selección de plantas semilleras.',
-        targetAudience: 'Productores rurales y jóvenes aprendices de la tierra'
-      },
-      {
-        title: 'Entrega Solidaria a Familias Quechuas',
-        description: 'Donación directa de lotes de semillas multiplicadas en Pampa Ñusta a familias campesinas en riesgo de pérdida de cosechas.',
-        targetAudience: 'Familias de las comunidades altas de Pisac'
-      }
-    ],
-    capacity: '20 participantes simultáneos',
-    schedule: 'Miércoles a Sábado: 10:00 - 16:00 hrs',
-    videoTimestamp: '02:40',
-    videoTimeSeconds: 160,
-    imageUrl: '/facilities/arca_semillas.jpg',
-    accentColor: 'emerald'
-  },
-  {
-    id: 'escuela-viva',
-    name: 'Escuela Viva & Bio-Parque Infantil Andino',
-    quechuaName: 'Yachay Wasi · Erqekuna Pampa',
-    category: 'Pedagogía de la Tierra & Comunidad',
-    tag: 'Espacio Educativo Familiar',
-    altitude: '3,315 m.s.n.m.',
-    coordinates: { pitch: -15, yaw: 95 },
-    shortDesc: 'Aldea pedagógica al aire libre con anfiteatro de barro, bio-juegos de madera, huerto infantil y rescate de alpacas.',
-    fullDesc: 'Un espacio pionero en los Andes donde la naturaleza es el aula. Diseñado para que niñas y niños de las comunidades rurales y visitantes internacionales reconecten con los ciclos de la tierra. Incluye un anfiteatro circular de barro para asambleas infantiles, laberinto de plantas aromáticas polinizadoras, huerto interactivo de siembra y un pequeño corral de alpacas y cuyes rescatados.',
-    infrastructureDetails: [
-      'Juegos bio-constructivos elaborados en madera reciclada de eucalipto y cuerdas de cabuya',
-      'Anfiteatro de tierra compactada para teatro andino y asambleas infantiles',
-      'Bio-huerto a escala infantil para el aprendizaje vivencial de la siembra (Tarpuy)',
-      'Corral ecológico de contacto y alimentación con camélidos andinos'
-    ],
-    servicesOffered: [
-      {
-        title: 'Jornadas Educativas para Escuelas Rurales',
-        description: 'Programas extracurriculares gratuitos para escuelas públicas de Pisac sobre ecología andina, quechua y respeto a la naturaleza.',
-        targetAudience: 'Estudiantes de primaria y secundaria de la cuenca'
-      },
-      {
-        title: 'Talleres de Barro, Tintes Naturales y Siembra Infantil',
-        description: 'Actividades de fin de semana para familias: modelado con arcilla, teñido con cochinilla y hierbas, y siembra de su propia planta.',
-        targetAudience: 'Familias con niñas y niños de 4 a 14 años'
-      },
-      {
-        title: 'Cuentacuentos Andinos y Música Ancestral',
-        description: 'Relatos orales bilingües (quechua y español) de mitos tutelares, el río Willakamayu y canciones tradicionales con quenas y tinyas.',
-        targetAudience: 'Toda la familia'
-      }
-    ],
-    capacity: '40 niñas, niños y acompañantes',
-    schedule: 'Sábados y Domingos: 10:00 - 15:30 hrs (Entre semana para colegios)',
-    videoTimestamp: '04:05',
-    videoTimeSeconds: 245,
-    imageUrl: '/facilities/escuela_viva.jpg',
-    accentColor: 'emerald'
-  },
-  {
-    id: 'maloka-ceremonial',
-    name: 'Maloka Ceremonial & Espacio Sonoro 432 Hz',
-    quechuaName: 'Willka Maloka · Hampiy Kancha',
-    category: 'Medicina Tradicional & Sanación Holística',
-    tag: 'Templo de Bioconstrucción',
-    altitude: '3,355 m.s.n.m.',
-    coordinates: { pitch: 22, yaw: -145 },
-    shortDesc: 'Templo circular de adobe tradicional con techo de paja brava, acústica natural y círculos de plantas maestras.',
-    fullDesc: 'Templo ceremonial sagrado edificado según los preceptos de la cosmovisión andina y la geometría sagrada. Sus muros de adobe térmico de 60 cm de espesor y su cúpula cónica de paja brava generan una atmósfera de silencio absoluto y recogimiento. El espacio cuenta con una acústica natural resonante que potencia las frecuencias armónicas de 432 Hz de instrumentos tradicionales.',
-    infrastructureDetails: [
-      'Panta circular de 12 metros de diámetro con óculo cenital para observación estelar',
-      'Muros de adobe crudo reforzados con paja y madera noble local',
-      'Piso de tierra compactada encerada naturalmente con aceites vegetales',
-      'Zona anexa de temazcal andino con piedras volcánicas de río sagrado'
-    ],
-    servicesOffered: [
-      {
-        title: 'Círculos de Plantas Maestras Tradicionales',
-        description: 'Ceremonias nocturnas y diurnas guiadas por taitas y curanderos linajudos bajo rigurosa preparación dietaria y respeto sagrado.',
-        targetAudience: 'Buscadores espirituales y personas en procesos de sanación profunda'
-      },
-      {
-        title: 'Inmersión Sonora y Terapia Frecuencias 432 Hz',
-        description: 'Baños de sonido con pututus de concha marina, quenas prehispánicas, cuencos de cristal y cantos tradicionales de sanación.',
-        targetAudience: 'Personas que buscan desestresarse, armonizar su sistema nervioso y meditar'
-      },
-      {
-        title: 'Baños de Vapor Andino (Inipi / Temazcal)',
-        description: 'Purificación física y emocional con piedras volcánicas incandescentes aromatizadas con eucalipto silvestre, muña y ruda.',
-        targetAudience: 'Grupos pequeños en retiro y mecenas de la reserva'
-      }
-    ],
-    capacity: '30 personas en círculo ceremonial',
-    schedule: 'Previa reserva y entrevista dietaria previa',
-    videoTimestamp: '05:25',
-    videoTimeSeconds: 325,
-    imageUrl: '/facilities/maloka_ceremonial.jpg',
-    accentColor: 'emerald'
-  },
-  {
-    id: 'terrazas-permacultura',
-    name: 'Terrazas de Permacultura, Cocina Sagrada & Vivero',
-    quechuaName: 'Allpa Kawsay · Mikuna Wasi',
-    category: 'Agroecología Regenerativa & Nutrición',
-    tag: 'Andenería Regenerativa',
-    altitude: '3,290 m.s.n.m.',
-    coordinates: { pitch: -18, yaw: 170 },
-    shortDesc: 'Andenes recuperados con microaspersión solar, huerto bio-intensivo, cocina a leña limpia y reforestación de queñuales.',
-    fullDesc: 'La muestra viva de cómo la sabiduría hidráulica inca se fusiona con la permacultura contemporánea. Cinco niveles de terrazas agrícolas restauradas con captación de vertientes naturales, compostaje biodinámico de alta montaña, una cocina comunitaria basada en productos libres de pesticidas cosechados al instante y un vivero dedicado a la reforestación de queñuales (Polylepis).',
-    infrastructureDetails: [
-      'Sistema de riego por goteo y microaspersión alimentado por energía fotovoltaica',
-      'Bancales bio-intensivos con cobertura viva (mulch) y rotación continua de cultivos',
-      'Cocina comunitaria con estufas ahorradoras de leña rocket y hornos de barro',
-      'Vivero forestal con capacidad de 5,000 plantones anuales de queñual y chachacomo'
-    ],
-    servicesOffered: [
-      {
-        title: 'Almuerzos Agroecológicos "De la Chacra al Plato"',
-        description: 'Menú gastronómico nutritivo elaborado con verduras, hierbas y granos cosechados directamente de las terrazas el mismo día.',
-        targetAudience: 'Visitantes del santuario, familias y grupos de retiro'
-      },
-      {
-        title: 'Voluntariado y Pasantías en Permacultura Andina',
-        description: 'Programas de 1 a 4 semanas de trabajo práctico en andenes, bioconstrucción, compostaje y manejo holístico del agua.',
-        targetAudience: 'Voluntarios nacionales e internacionales, agrónomos y ambientalistas'
-      },
-      {
-        title: 'Jornadas Comunitarias de Reforestación Andina',
-        description: 'Salidas de campo colectivas para plantar queñuales en las cabeceras de cuenca y quebradas para asegurar agua limpia a Pisac.',
-        targetAudience: 'Comunidad de Pisac, turistas ecológicos y empresas mecenas'
-      }
-    ],
-    capacity: '35 comensales y practicantes',
-    schedule: 'Lunes a Domingo: 08:30 - 17:00 hrs',
-    videoTimestamp: '06:45',
-    videoTimeSeconds: 405,
-    imageUrl: '/facilities/terrazas_permacultura.jpg',
-    accentColor: 'emerald'
-  }
-];
+import { useTranslation } from 'react-i18next';
+
+export const useSanctuaryFacilities = (): SanctuaryFacility[] => {
+  const { t } = useTranslation();
+
+  return [
+    {
+      id: 'wachuma-wasi',
+      name: t('pampa_facilities.wachuma_wasi.name'),
+      quechuaName: 'Wachuma Wasi · Templo del Cactus Sagrado',
+      category: 'Conservación Botánica & Etnobotánica',
+      tag: 'Banco Genético Central',
+      altitude: '3,347 m.s.n.m.',
+      coordinates: { pitch: -6, yaw: 18 },
+      shortDesc: t('pampa_facilities.wachuma_wasi.shortDesc'),
+      fullDesc: t('pampa_facilities.wachuma_wasi.fullDesc'),
+      neuromarketingHook: t('pampa_facilities.wachuma_wasi.neuromarketingHook'),
+      scope: t('pampa_facilities.wachuma_wasi.scope'),
+      researchObjectives: [
+        'Identificación taxonómica y fenotípica de 40 linajes madre ancestrales.',
+        'Aclimatación y resistencia al estrés hídrico en domos de arquitectura pasiva.',
+        'Propagación biotecnológica de 5,000 clones para reforestación endémica.'
+      ],
+      customSections: [
+        {
+          title: 'Objetivo del Banco Genético',
+          type: 'text',
+          content: 'Frente a la tala indiscriminada y el saqueo silvestre del cactus sagrado en los valles interandinos, Pampa Ñusta ha creado un banco de germoplasma vivo donde cada ejemplar es catalogado, cuidado y propagado asexualmente por esquejes madre.',
+          bullets: [
+            'Protección de Clones: Preservación de genotipos con 7 y 8 costillas sagradas y alta resiliencia a heladas de 3,347 msnm.',
+            'Riego por Gravedad: Canales incaicos de agua pura de manantial que nutren el sustrato pedregoso.',
+            'Polinización Natural: Mantenimiento de corredores biológicos para murciélagos nectarívoros y mariposas nocturnas.'
+          ]
+        },
+        {
+          title: 'Taxonomía & Biometría',
+          type: 'taxonomy',
+          metrics: [
+            { label: 'Nombre Científico', value: 'Trichocereus pachanoi' },
+            { label: 'Sinónimo Aceptado', value: 'Echinopsis pachanoi' },
+            { label: 'Nombre Quechua', value: 'Achuma / Wachuma' },
+            { label: 'Distribución Hábitat', value: '2,000 - 3,400 msnm' },
+            { label: 'Crecimiento Anual', value: '30 - 45 cm / año' },
+            { label: 'Floración', value: 'Nocturna, 19-24 cm, blanca' }
+          ]
+        },
+        {
+          title: 'El Guardián de la Visión Andina',
+          type: 'highlight',
+          content: 'Representado en los monolitos de la cultura Chavín de Huántar desde hace más de 3,000 años, la Wachuma era considerada la llave para conectar el Kay Pacha (mundo del presente) con el Hanan Pacha (mundo espiritual).\n\n**Rito de Agradecimiento:**\nAntes de realizar cualquier poda o cuidado en el huerto, los guardianes de Pampa Ñusta realizan el Kintu (ofrenda de 3 hojas de coca) pidiendo permiso a los Apus Linli y Pachatusan.'
+        }
+      ],
+      benefits: [
+        { icon: 'award', title: 'Certificado de Adopción', description: 'Reconocimiento fiscal deducible de impuestos (según país de origen).' },
+        { icon: 'leaf', title: 'Apadrinamiento Directo', description: 'Tu nombre en un linaje madre ancestral custodiado en el domo.' },
+        { icon: 'heart', title: 'Retiros Exclusivos', description: 'Acceso anual a ceremonias privadas de integración botánica.' }
+      ],
+      projectBudget: '$ 45,500 USD',
+      roadmap: [
+        { phase: 'Fase I', title: 'Infraestructura Bioclimática', description: 'Levantamiento topográfico y construcción de la estructura geodésica con madera certificada.', status: 'completed' },
+        { phase: 'Fase II', title: 'Rescate de Linajes', description: 'Recolección ética de especímenes madre y trasplante con sustratos volcánicos especializados.', status: 'in-progress' },
+        { phase: 'Fase III', title: 'Propagación Masiva', description: 'Desarrollo de almácigos y clones para reintroducción ecológica en ecosistemas degradados.', status: 'planned' }
+      ],
+      infrastructureDetails: [
+        'Estructura geodésica de madera certificada con cubierta de policarbonato alveolar UV',
+        'Sistema de sustrato multicapa con piedra pómez, zeolita y humus de bosque andino',
+        'Sensores IoT para monitoreo de humedad, temperatura y radiación fotosintética',
+        'Banco de propagación vegetativa de alta esterilidad'
+      ],
+      servicesOffered: [
+        {
+          title: 'Visitas Guiadas de Etnobotánica Sagrada',
+          description: 'Recorrido educativo de 90 minutos con botánicos locales sobre historia, taxonomía y rol cultural de la Wachuma en las civilizaciones preincas.',
+          targetAudience: 'Investigadores, botánicos, estudiantes y viajeros conscientes'
+        }
+      ],
+      capacity: '25 personas por grupo',
+      schedule: 'Martes a Domingo: 09:00 - 17:00 hrs',
+      videoTimestamp: '01:15',
+      videoTimeSeconds: 75,
+      imageUrl: '/assets/ecoaldea/instalacion_domo_wachuma.jpg',
+      accentColor: 'emerald'
+    },
+    {
+      id: 'arca-semillas',
+      name: t('pampa_facilities.arca_semillas.name'),
+      quechuaName: 'Muru Muyu Kawsay · Arca de Biodiversidad',
+      category: 'Soberanía Alimentaria & Agroecología',
+      tag: 'Custodia de Germoplasma',
+      altitude: '3,330 m.s.n.m.',
+      coordinates: { pitch: 12, yaw: -65 },
+      shortDesc: t('pampa_facilities.arca_semillas.shortDesc'),
+      fullDesc: t('pampa_facilities.arca_semillas.fullDesc'),
+      neuromarketingHook: t('pampa_facilities.arca_semillas.neuromarketingHook'),
+      scope: t('pampa_facilities.arca_semillas.scope'),
+      researchObjectives: [
+        'Rescate y preservación criogénica in-situ de 250 ecotipos de cultivos andinos.',
+        'Análisis de resistencia a heladas y sequías extremas frente al calentamiento global.',
+        'Distribución solidaria de germoplasma fortificado a 18 comunidades del Ayllu.'
+      ],
+      benefits: [
+        { icon: 'shield', title: 'Custodio Honorífico', description: 'Reconocimiento oficial como protector del Patrimonio de la Humanidad.' },
+        { icon: 'globe', title: 'Reportes de Impacto', description: 'Acceso a métricas de distribución comunitaria y análisis agrícola.' },
+        { icon: 'award', title: 'Caja de Semillas Ancestrales', description: 'Envío anual a tu domicilio de un kit simbólico de germoplasma andino.' }
+      ],
+      projectBudget: '$ 32,000 USD',
+      roadmap: [
+        { phase: 'Fase I', title: 'Bóveda de Barro', description: 'Construcción de recintos isotérmicos subterráneos con adobe de alta densidad.', status: 'completed' },
+        { phase: 'Fase II', title: 'Catálogo de Ecotipos', description: 'Recolección, secado en sombra y clasificación morfológica de semillas autóctonas.', status: 'in-progress' },
+        { phase: 'Fase III', title: 'Laboratorio de Germinación', description: 'Implementación de microscopios y cámaras de germinación controlada.', status: 'planned' }
+      ],
+      infrastructureDetails: [
+        'Cámaras de secado tradicional en sombra con corrientes de aire cordillerano',
+        'Más de 200 accesiones de semillas nativas documentadas con origen comunal',
+        'Vasijas de arcilla local y contenedores de vidrio protegidos de la radiación UV',
+        'Mesa de cernido, selección manual y pruebas de germinación in-vitro'
+      ],
+      servicesOffered: [
+        {
+          title: 'Círculos de Trueque de Semillas (Chhalay)',
+          description: 'Encuentros mensuales donde agricultores locales y custodios foráneos intercambian semillas nativas bajo el principio del Ayni.',
+          targetAudience: 'Comunidades campesinas, agricultores agroecológicos y huertos urbanos'
+        }
+      ],
+      capacity: '20 participantes simultáneos',
+      schedule: 'Miércoles a Sábado: 10:00 - 16:00 hrs',
+      videoTimestamp: '02:40',
+      videoTimeSeconds: 160,
+      imageUrl: '/assets/ecoaldea/instalacion_arca_semillas.jpg',
+      accentColor: 'emerald'
+    },
+    {
+      id: 'escuela-viva',
+      name: t('pampa_facilities.escuela_viva.name'),
+      quechuaName: 'Yachay Wasi · Erqekuna Pampa',
+      category: 'Pedagogía de la Tierra',
+      tag: 'Desarrollo Humano',
+      altitude: '3,315 m.s.n.m.',
+      coordinates: { pitch: -15, yaw: 95 },
+      shortDesc: t('pampa_facilities.escuela_viva.shortDesc'),
+      fullDesc: t('pampa_facilities.escuela_viva.fullDesc'),
+      neuromarketingHook: t('pampa_facilities.escuela_viva.neuromarketingHook'),
+      scope: t('pampa_facilities.escuela_viva.scope'),
+      researchObjectives: [
+        'Desarrollo de currículo pedagógico intercultural bilingüe (Quechua-Español).',
+        'Evaluación del impacto del aprendizaje bio-experiencial en la psicomotricidad infantil.',
+        'Integración de saberes ancestrales en la educación ambiental contemporánea.'
+      ],
+      benefits: [
+        { icon: 'heart', title: 'Trazabilidad Educativa', description: 'Reportes semestrales del progreso académico de los niños apadrinados.' },
+        { icon: 'trending-up', title: 'Placa Conmemorativa', description: 'Reconocimiento grabado en madera nativa exhibida en el anfiteatro.' },
+        { icon: 'globe', title: 'Ceremonia de Clausura', description: 'Invitación VIP a la fiesta del Ayllu y celebración de fin de curso.' }
+      ],
+      projectBudget: '$ 28,500 USD',
+      roadmap: [
+        { phase: 'Fase I', title: 'Infraestructura Lúdica', description: 'Diseño e instalación de bio-juegos seguros con maderas nobles y cuerdas de fibras naturales.', status: 'completed' },
+        { phase: 'Fase II', title: 'Aulas de Barro', description: 'Construcción de domos pequeños de súper-adobe para talleres artísticos de invierno.', status: 'in-progress' },
+        { phase: 'Fase III', title: 'Programa de Becas', description: 'Financiamiento continuo para que 50 niños del valle accedan a educación complementaria gratuita.', status: 'planned' }
+      ],
+      infrastructureDetails: [
+        'Juegos bio-constructivos elaborados en madera reciclada de eucalipto',
+        'Anfiteatro de tierra compactada con acústica natural',
+        'Aulas bioclimáticas de superadobe con techos recíprocos',
+        'Corral ecológico de contacto para terapia asistida con camélidos'
+      ],
+      servicesOffered: [
+        {
+          title: 'Jornadas Educativas para Escuelas Rurales',
+          description: 'Programas extracurriculares gratuitos sobre ecología andina, quechua y respeto a la naturaleza.',
+          targetAudience: 'Estudiantes de primaria de la cuenca'
+        }
+      ],
+      capacity: '40 niñas, niños y acompañantes',
+      schedule: 'Fines de semana: 10:00 - 15:30 hrs',
+      videoTimestamp: '04:05',
+      videoTimeSeconds: 245,
+      imageUrl: '/assets/ecoaldea/instalacion_escuela_viva.jpg',
+      accentColor: 'emerald'
+    },
+    {
+      id: 'maloka-ceremonial',
+      name: t('pampa_facilities.maloka_ceremonial.name'),
+      quechuaName: 'Willka Maloka · Hampiy Kancha',
+      category: 'Medicina Tradicional Integrativa',
+      tag: 'Investigación Etnopsiquiátrica',
+      altitude: '3,355 m.s.n.m.',
+      coordinates: { pitch: 22, yaw: -145 },
+      shortDesc: t('pampa_facilities.maloka_ceremonial.shortDesc'),
+      fullDesc: t('pampa_facilities.maloka_ceremonial.fullDesc'),
+      neuromarketingHook: t('pampa_facilities.maloka_ceremonial.neuromarketingHook'),
+      scope: t('pampa_facilities.maloka_ceremonial.scope'),
+      researchObjectives: [
+        'Estudio fenomenológico de la remisión de ansiedad clínica mediante plantas maestras.',
+        'Medición de frecuencias acústicas (432 Hz) y su impacto en el sistema nervioso parasimpático.',
+        'Sistematización de los protocolos de dieta y purificación andina.'
+      ],
+      benefits: [
+        { icon: 'trending-up', title: 'Co-Autoría en Investigación', description: 'Tu nombre en los reportes clínicos sobre neuroplasticidad.' },
+        { icon: 'heart', title: 'Retiro Privado VIP', description: 'Un retiro privado anual en la Maloka para ti y acompañantes.' },
+        { icon: 'shield', title: 'Pionero Integrativo', description: 'Acceso a la mesa de consejeros del avance psiquiátrico-tradicional.' }
+      ],
+      projectBudget: '$ 65,000 USD',
+      roadmap: [
+        { phase: 'Fase I', title: 'Cimentación y Muros', description: 'Levantamiento de muros de adobe sismo-resistente y techos de paja brava.', status: 'completed' },
+        { phase: 'Fase II', title: 'Tratamiento Acústico', description: 'Ingeniería de sonido natural empleando resonadores cerámicos incrustados en los muros.', status: 'in-progress' },
+        { phase: 'Fase III', title: 'Clínica Integrativa', description: 'Construcción de áreas anexas para monitoreo médico y contención terapéutica post-ceremonial.', status: 'planned' }
+      ],
+      infrastructureDetails: [
+        'Planta circular de 12 metros inspirada en geometría fractal andina',
+        'Resonadores acústicos ancestrales para amplificación armónica',
+        'Sistemas de calefacción radiante subterránea tipo "gloria"',
+        'Zonas de integración psicológica con luz ámbar regulable'
+      ],
+      servicesOffered: [
+        {
+          title: 'Retiros Clínico-Tradicionales',
+          description: 'Intervenciones terapéuticas inmersivas guiadas por facilitadores integrativos y chamanes de la nación Q\'ero.',
+          targetAudience: 'Pacientes en recuperación de TEPT, depresión y adicciones'
+        }
+      ],
+      capacity: '30 personas en círculo ceremonial',
+      schedule: 'Previa reserva y evaluación clínica',
+      videoTimestamp: '05:25',
+      videoTimeSeconds: 325,
+      imageUrl: '/assets/ecoaldea/instalacion_maloka_ceremonial.jpg',
+      accentColor: 'emerald'
+    },
+    {
+      id: 'terrazas-permacultura',
+      name: t('pampa_facilities.terrazas_permacultura.name'),
+      quechuaName: 'Allpa Kawsay · Mikuna Wasi',
+      category: 'Ingeniería Agrícola & Resiliencia Climática',
+      tag: 'Piloto Hidro-Solar',
+      altitude: '3,290 m.s.n.m.',
+      coordinates: { pitch: -18, yaw: 170 },
+      shortDesc: t('pampa_facilities.terrazas_permacultura.shortDesc'),
+      fullDesc: t('pampa_facilities.terrazas_permacultura.fullDesc'),
+      neuromarketingHook: t('pampa_facilities.terrazas_permacultura.neuromarketingHook'),
+      scope: t('pampa_facilities.terrazas_permacultura.scope'),
+      researchObjectives: [
+        'Evaluación de eficiencia hídrica combinando andenería tradicional y riego de ultra-bajo caudal.',
+        'Análisis de secuestro de carbono en suelos restaurados con agricultura sintrópica.',
+        'Desarrollo de un modelo económico de huella de carbono negativa para agricultores locales.'
+      ],
+      benefits: [
+        { icon: 'leaf', title: 'Bonos de Carbono', description: 'Métricas certificadas de toneladas de carbono secuestradas anualmente.' },
+        { icon: 'globe', title: 'Modelo Open-Source', description: 'Derechos para replicar nuestra ingeniería agro-solar en tus próprios terrenos.' },
+        { icon: 'award', title: 'Legado Físico', description: 'Tu nombre en la red de abastecimiento hídrico e infraestructura solar.' }
+      ],
+      projectBudget: '$ 80,000 USD',
+      roadmap: [
+        { phase: 'Fase I', title: 'Restauración Lítica', description: 'Reconstrucción de muros de contención incaicos y estabilización de taludes.', status: 'completed' },
+        { phase: 'Fase II', title: 'Bombeo Solar', description: 'Instalación de paneles solares y sistemas de impulsión de agua desde acuíferos profundos.', status: 'in-progress' },
+        { phase: 'Fase III', title: 'Agro-Robótica Básica', description: 'Integración de sensores de humedad de suelo conectados por LoRaWAN para riego autónomo.', status: 'planned' }
+      ],
+      infrastructureDetails: [
+        'Muros de andenería seca estabilizada con vetiver y agaves nativos',
+        'Red de tuberías presurizadas y micro-aspersores autocompensados',
+        'Estación agrometeorológica con transmisión de datos en tiempo real',
+        'Composteras biodinámicas con control térmico'
+      ],
+      servicesOffered: [
+        {
+          title: 'Transferencia Tecnológica Comunitaria',
+          description: 'Capacitación a líderes comunales en instalación de sistemas solares y mantenimiento de riego tecnificado.',
+          targetAudience: 'Ingenieros agrónomos, ONGs y comunidades campesinas'
+        }
+      ],
+      capacity: '35 investigadores y pasantes',
+      schedule: 'Lunes a Domingo: 08:30 - 17:00 hrs',
+      videoTimestamp: '06:45',
+      videoTimeSeconds: 405,
+      imageUrl: '/assets/ecoaldea/instalacion_terrazas_permacultura.jpg',
+      accentColor: 'emerald'
+    }
+  ];
+};
 
 export interface PanoramaSceneItem {
   id: string;
@@ -330,4 +436,3 @@ export const SANCTUARY_REFERENCE_VIDEOS: SanctuaryReferenceVideo[] = [
     description: 'Tomas de alta fidelidad que transmiten la paz, el viento andino y el verdor regenerativo de las terrazas agroecológicas y domos del santuario.'
   }
 ];
-

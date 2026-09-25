@@ -1,128 +1,116 @@
-import React, { useState } from 'react';
-import { Star, Award, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
+import React, { useRef } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Award, ChevronLeft, ChevronRight, Star } from 'lucide-react';
 import { TRIPADVISOR_REVIEWS } from '../data/mockData';
 
 export const SocialProofSection: React.FC = () => {
-  const [currentReviewIndex, setCurrentReviewIndex] = useState(0);
+  const { t } = useTranslation();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  const activeReview = TRIPADVISOR_REVIEWS[currentReviewIndex];
-
-  const handleNextReview = () => {
-    setCurrentReviewIndex((prev) => (prev + 1) % TRIPADVISOR_REVIEWS.length);
+  const scrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -window.innerWidth * 0.6, behavior: 'smooth' });
+    }
   };
 
-  const handlePrevReview = () => {
-    setCurrentReviewIndex((prev) => (prev - 1 + TRIPADVISOR_REVIEWS.length) % TRIPADVISOR_REVIEWS.length);
+  const scrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: window.innerWidth * 0.6, behavior: 'smooth' });
+    }
   };
 
   return (
-    <section id="testimonios" className="relative py-24 bg-[#050505] text-stone-100 border-b border-stone-800 overflow-hidden">
-      {/* Cinematic ambient background glow */}
-      <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-amber-900/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-amber-600/30 bg-amber-950/40 text-amber-300 text-xs uppercase tracking-widest mb-3 font-mono font-bold shadow-sm backdrop-blur-md">
-            <Award className="w-3.5 h-3.5 text-amber-400" />
-            <span>TESTIMONIOS Y RECONOCIMIENTO INTERNACIONAL</span>
+    <section id="testimonios" className="relative py-32 md:py-48 bg-sadhana-sand/20 text-sadhana-dark overflow-hidden">
+      
+      <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 mb-16 md:mb-24 flex flex-col md:flex-row md:items-end justify-between gap-8">
+        <div>
+          <div className="text-[10px] md:text-xs uppercase tracking-[0.3em] text-sadhana-primary font-bold mb-8">
+            {t('social.subtitle')}
           </div>
-          <h2 className="font-cinzel text-3xl sm:text-5xl font-bold tracking-tight text-stone-50">
-            Voces de la Comunidad & <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-500 to-amber-200">Experiencias en Pisac</span>
+          <h2 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] text-sadhana-dark mb-8">
+            {t('social.title1')} & <br />
+            <span className="text-sadhana-sand">{t('social.title2')}</span>
           </h2>
-          <p className="mt-4 text-stone-400 text-sm sm:text-base leading-relaxed font-sans font-light">
-            Elogios y testimonios internacionales de visitantes en el santuario y la ecoaldea en el Valle Sagrado.
-          </p>
+          
+          <a 
+            href="https://www.tripadvisor.com/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-4 px-6 py-3 bg-white rounded-full border border-sadhana-dark/10 hover:border-[#34E0A1] hover:shadow-lg transition-all hover:-translate-y-1 group"
+          >
+            <div className="w-10 h-10 rounded-full bg-[#34E0A1] flex items-center justify-center shrink-0">
+               <svg viewBox="0 0 24 24" fill="white" className="w-6 h-6">
+                 <path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-4 12.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5zm8 0a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/>
+               </svg>
+            </div>
+            <div className="flex flex-col pr-4">
+              <span className="text-[10px] text-sadhana-dark/50 font-bold tracking-[0.2em] uppercase leading-none mb-1">TripAdvisor</span>
+              <span className="text-sm text-sadhana-dark font-black tracking-widest uppercase group-hover:text-[#34E0A1] transition-colors leading-none">Pampa Ñusta</span>
+            </div>
+          </a>
         </div>
 
-        {/* Reviews Card Centered */}
-        <div className="max-w-3xl mx-auto">
-          <div className="p-6 sm:p-8 rounded-3xl bg-stone-900/50 backdrop-blur-md border border-stone-800 shadow-2xl relative overflow-hidden">
-            {/* Cinematic light flare top */}
-            <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
-            
-            <div className="flex items-center justify-between pb-4 border-b border-stone-800 mb-5 relative z-10">
-              <div className="flex items-center gap-2.5">
-                <div className="w-10 h-10 rounded-full bg-stone-950 border border-amber-500/30 flex items-center justify-center text-amber-400 shadow-[0_0_15px_rgba(245,158,11,0.2)]">
-                  <Quote className="w-4 h-4 fill-amber-400" />
-                </div>
-                <div>
-                  <span className="font-bold text-[10px] uppercase tracking-wider text-amber-500 font-mono">
-                    Opiniones de la Audiencia
-                  </span>
-                  <h3 className="font-cinzel text-base font-bold text-stone-100">Pisac & Ecoaldea Pampa Ñusta</h3>
-                </div>
-              </div>
-              <div className="flex items-center gap-1 bg-stone-950 px-2.5 py-1 rounded-lg border border-amber-500/30">
-                <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                <span className="font-mono font-bold text-sm text-amber-300">4.9 / 5.0</span>
-              </div>
-            </div>
-
-            {/* Active Review Box */}
-            <div className="relative p-6 sm:p-8 rounded-2xl bg-stone-950 border border-stone-800 min-h-[200px] flex flex-col justify-between shadow-inner">
-              <div className="absolute inset-0 bg-[url('/noise.png')] opacity-20 mix-blend-overlay pointer-events-none rounded-2xl"></div>
-              <div className="relative z-10">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={activeReview.avatarUrl}
-                      alt={activeReview.author}
-                      referrerPolicy="no-referrer"
-                      className="w-10 h-10 rounded-full object-cover border-2 border-stone-700 p-0.5"
-                    />
-                    <div>
-                      <span className="font-bold text-sm text-stone-100 block">{activeReview.author}</span>
-                      <span className="text-[11px] text-stone-500 font-mono">
-                        {activeReview.countryFlag} {activeReview.country} · {activeReview.date}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex text-amber-400">
-                    {[...Array(activeReview.rating)].map((_, i) => (
-                      <Star key={i} className="w-3.5 h-3.5 fill-amber-400" />
-                    ))}
-                  </div>
-                </div>
-
-                <h4 className="font-cinzel text-base sm:text-lg font-bold text-amber-300 mb-2">
-                  «{activeReview.title}»
-                </h4>
-                <p className="text-sm sm:text-base text-stone-300 leading-relaxed font-sans font-light italic">
-                  {activeReview.comment}
-                </p>
-              </div>
-
-              <div className="relative z-10 mt-6 pt-4 border-t border-stone-800 flex items-center justify-between text-xs text-stone-500 font-mono">
-                <span>{activeReview.helpfulCount} cinéfilos coinciden con esta reseña</span>
-                <span className="text-emerald-400 font-bold flex items-center gap-1.5"><Award className="w-3 h-3" /> Experiencia Verificada</span>
-              </div>
-            </div>
-
-            {/* Review Carousel Controls */}
-            <div className="flex items-center justify-between mt-6 relative z-10">
-              <span className="text-xs font-mono text-stone-500 font-bold tracking-widest uppercase">
-                Toma {currentReviewIndex + 1} de {TRIPADVISOR_REVIEWS.length}
-              </span>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handlePrevReview}
-                  className="p-3 rounded-xl bg-stone-950 border border-stone-700 text-stone-400 hover:text-amber-400 hover:border-amber-500/50 transition-colors cursor-pointer shadow-sm"
-                  aria-label="Opinión anterior"
-                >
-                  <ChevronLeft className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={handleNextReview}
-                  className="p-3 rounded-xl bg-stone-950 border border-stone-700 text-stone-400 hover:text-amber-400 hover:border-amber-500/50 transition-colors cursor-pointer shadow-sm"
-                  aria-label="Siguiente opinión"
-                >
-                  <ChevronRight className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
-          </div>
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={scrollLeft}
+            className="w-16 h-16 rounded-full border border-sadhana-dark/20 flex items-center justify-center hover:bg-sadhana-dark hover:text-white transition-colors cursor-pointer"
+          >
+            <ChevronLeft className="w-6 h-6" />
+          </button>
+          <button 
+            onClick={scrollRight}
+            className="w-16 h-16 rounded-full border border-sadhana-dark/20 flex items-center justify-center hover:bg-sadhana-dark hover:text-white transition-colors cursor-pointer"
+          >
+            <ChevronRight className="w-6 h-6" />
+          </button>
         </div>
       </div>
+
+      {/* Horizontal Scroll Container */}
+      <div 
+        ref={scrollContainerRef}
+        className="flex overflow-x-auto snap-x snap-mandatory hide-scrollbar gap-6 md:gap-8 px-6 md:px-12 pb-12 cursor-grab active:cursor-grabbing"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
+        {TRIPADVISOR_REVIEWS.map((review, idx) => (
+          <div 
+            key={idx}
+            className="snap-start shrink-0 w-[90vw] sm:w-[60vw] lg:w-[35vw] xl:w-[28vw] flex flex-col justify-between bg-white/70 backdrop-blur-md rounded-[2rem] p-8 md:p-10 border border-sadhana-dark/5 shadow-2xl hover:shadow-3xl hover:-translate-y-2 transition-all duration-500"
+          >
+            <div>
+              <div className="flex gap-1 mb-6 text-sadhana-orange">
+                {[...Array(review.rating)].map((_, i) => (
+                  <Star key={i} className="w-5 h-5 fill-sadhana-orange" />
+                ))}
+              </div>
+              <h3 className="font-serif italic text-2xl md:text-3xl text-sadhana-dark leading-tight mb-6">
+                «{review.title}»
+              </h3>
+              <p className="text-base md:text-lg text-sadhana-brown/80 font-medium leading-relaxed mb-8">
+                {review.comment}
+              </p>
+            </div>
+
+            <div className="flex items-center gap-4 pt-6 border-t border-sadhana-dark/10 mt-auto">
+              <img
+                src={review.avatarUrl}
+                alt={review.author}
+                referrerPolicy="no-referrer"
+                className="w-14 h-14 rounded-full object-cover grayscale"
+              />
+              <div>
+                <span className="font-bold text-lg text-sadhana-dark block uppercase tracking-wide">
+                  {review.author}
+                </span>
+                <span className="text-xs text-sadhana-primary font-bold uppercase tracking-widest flex items-center gap-2 mt-1">
+                  {review.countryFlag} {review.country}
+                </span>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
     </section>
   );
 };

@@ -1,0 +1,24 @@
+{
+  "header": {
+    "home": "Accueil",
+    "location": "Emplacement",
+    "facilities": "Installations",
+    "donate": "Faire un don",
+    "contact": "Contact",
+    "audioLog": "Journal Audio",
+    "scenes": "Scènes",
+    "mute": "Sourdine",
+    "audio": "Audio"
+  },
+  "hero": {
+    "audioOn": "AUDIO NATURE",
+    "audioOff": "ACTIVER L'AUDIO",
+    "video": "Vidéo",
+    "poster": "Affiche",
+    "badge": "ÉCOVILLAGE VIVANT · VALLÉE SACRÉE",
+    "title": "PAMPA ÑUSTA",
+    "subtitle": "SANCTUAIRE VIVANT",
+    "enter": "Entrer",
+    "discover": "Découvrir"
+  }
+}

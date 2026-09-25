@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Compass,
   Maximize2,
@@ -25,29 +26,51 @@ import {
   Film,
   Compass as CompassIcon,
   HelpCircle,
-  Plus
+  Plus,
+  Target,
+  Banknote,
+  GitCommit,
+  Quote
 } from 'lucide-react';
 import {
-  PAMPA_NUSTA_FACILITIES,
+  useSanctuaryFacilities,
   SANCTUARY_PANORAMA_SCENES,
   SANCTUARY_REFERENCE_VIDEOS,
   SanctuaryFacility,
   PanoramaSceneItem,
   SanctuaryReferenceVideo
 } from '../data/sanctuaryFacilities';
-import { InteractiveSanctuaryMap } from './InteractiveSanctuaryMap';
 
-export const VirtualTour360: React.FC = () => {
+const InteractiveSanctuaryMap = React.lazy(() => import('./InteractiveSanctuaryMap').then(m => ({ default: m.InteractiveSanctuaryMap })));
+
+interface VirtualTour360Props {
+  onOpenProject?: (facility: SanctuaryFacility) => void;
+}
+
+export const VirtualTour360: React.FC<VirtualTour360Props> = ({ onOpenProject }) => {
+  const { t } = useTranslation();
+  const PAMPA_NUSTA_FACILITIES = useSanctuaryFacilities();
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const carouselRef = useRef<HTMLDivElement | null>(null);
 
-  // Active Viewing Mode: 'video' (Video Referencial & 360) or 'panorama360' (Explorador Esférico Canvas)
-  const [activeMode, setActiveMode] = useState<'video' | 'panorama360' | 'map'>('video');
+  const [activeMode, setActiveMode] = useState<'video' | 'panorama360' | 'map' | 'journey'>('video');
+  const [activeCinematicIndex, setActiveCinematicIndex] = useState(0);
+
+  // Auto-advance cinematic slider
+  useEffect(() => {
+    if (activeMode !== 'video') return;
+    const interval = setInterval(() => {
+      setActiveCinematicIndex((prev) => (prev + 1) % PAMPA_NUSTA_FACILITIES.length);
+    }, 6000); // 6 seconds per slide
+    return () => clearInterval(interval);
+  }, [activeMode]);
 
   // Video Player State
   const [activeVideo, setActiveVideo] = useState<SanctuaryReferenceVideo>(SANCTUARY_REFERENCE_VIDEOS[0]);
   const [isVideoPlaying, setIsVideoPlaying] = useState<boolean>(true);
-  const [selectedVideoFacility, setSelectedVideoFacility] = useState<SanctuaryFacility>(PAMPA_NUSTA_FACILITIES[0]);
+  const [selectedVideoFacility, setSelectedVideoFacility] = useState<SanctuaryFacility | null>(null);
   const [customVideoInput, setCustomVideoInput] = useState<string>('');
   const [showCustomInput, setShowCustomInput] = useState<boolean>(false);
   const [activeEmbedUrl, setActiveEmbedUrl] = useState<string>(
@@ -60,7 +83,6 @@ export const VirtualTour360: React.FC = () => {
   const [pitch, setPitch] = useState<number>(-5);
   const [fov, setFov] = useState<number>(75);
   const [isAutoRotating, setIsAutoRotating] = useState<boolean>(true);
-  const [selectedFacility, setSelectedFacility] = useState<SanctuaryFacility | null>(null);
   const [isFullscreen, setIsFullscreen] = useState<boolean>(false);
   const [imageLoaded, setImageLoaded] = useState<boolean>(false);
 
@@ -74,6 +96,16 @@ export const VirtualTour360: React.FC = () => {
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
     return match && match[2].length === 11 ? match[2] : null;
+  };
+
+  const scrollCarousel = (direction: 'left' | 'right') => {
+    if (carouselRef.current) {
+      const scrollAmount = window.innerWidth > 768 ? 450 + 32 : window.innerWidth * 0.85 + 24;
+      carouselRef.current.scrollBy({
+        left: direction === 'right' ? scrollAmount : -scrollAmount,
+        behavior: 'smooth'
+      });
+    }
   };
 
   // Change selected reference video
@@ -96,7 +128,7 @@ export const VirtualTour360: React.FC = () => {
         subtitle: 'Video referencial provisto por el usuario',
         type: 'youtube',
         url: customVideoInput.trim(),
-        embedUrl: `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1`,
+        embedUrl: `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=0&rel=0&modestbranding=1`,
         thumbnailUrl: `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`,
         duration: 'En vivo',
         tag: 'Video Personalizado',
@@ -134,7 +166,7 @@ export const VirtualTour360: React.FC = () => {
     if (activeVideo.type === 'youtube' || activeVideo.type === 'youtube360') {
       const ytId = extractYouTubeId(activeVideo.url) || 'CheJWYQvP98';
       setActiveEmbedUrl(
-        `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&start=${facility.videoTimeSeconds}`
+        `https://www.youtube-nocookie.com/embed/${ytId}?autoplay=0&rel=0&modestbranding=1&start=${facility.videoTimeSeconds}`
       );
     }
   };
@@ -315,112 +347,121 @@ export const VirtualTour360: React.FC = () => {
   };
 
   return (
-    <section id="tour360" className="relative py-20 sm:py-28 bg-white text-stone-900 border-b border-stone-200 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <>
+    <section id="tour360" className="relative py-32 md:py-48 bg-white text-sadhana-dark overflow-hidden">
+      <div className="w-full max-w-[1600px] mx-auto px-6 md:px-12 relative z-10">
         
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-10 sm:mb-12">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-amber-600/30 bg-amber-50 text-amber-900 text-xs uppercase tracking-widest mb-3 font-mono font-bold shadow-sm">
-            <Film className="w-3.5 h-3.5 text-amber-700" />
-            <span>VIDEO REFERENCIAL & RECORRIDO VIRTUAL · PAMPA ÑUSTA</span>
+        <div className="max-w-4xl mb-16 md:mb-24">
+          <div className="text-[10px] md:text-xs uppercase tracking-[0.3em] text-sadhana-primary font-bold mb-8">
+            02 — Recorrido Inmersivo
           </div>
-          <h2 className="font-cinzel text-3xl sm:text-5xl font-extrabold tracking-tight text-stone-950">
-            Recorrido Virtual: <span className="text-amber-800">Pampa Ñusta</span>
+          <h2 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tighter leading-[0.9] text-sadhana-dark mb-6">
+            TOUR <br />
+            <span className="text-sadhana-sand">{t('tour360.title2')}</span>
           </h2>
-          <p className="mt-3 text-stone-600 text-sm sm:text-base leading-relaxed font-sans font-medium">
-            Conoce a través de nuestro video referencial y recorrido virtual las instalaciones ecológicas, domos botánicos y servicios comunitarios del santuario en las laderas de Pisac (3,347 msnm).
+          <p className="text-lg md:text-xl text-sadhana-brown/70 font-medium max-w-2xl leading-relaxed">
+            {t('tour360.desc')}
           </p>
         </div>
 
         {/* Mode Selector Pill Strip */}
-        <div className="flex items-center justify-center gap-3 mb-8 flex-wrap">
+        <div className="flex flex-wrap items-center gap-4 mb-12">
           <button
             onClick={() => setActiveMode('video')}
-            className={`px-5 py-2.5 rounded-2xl text-xs font-mono uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 font-bold shadow-sm ${
+            className={`px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-3 ${
               activeMode === 'video'
-                ? 'bg-amber-600 text-white border-2 border-amber-600 shadow-amber-900/20'
-                : 'bg-stone-50 border border-stone-300 text-stone-700 hover:text-stone-950 hover:bg-stone-100'
+                ? 'bg-sadhana-primary text-white'
+                : 'bg-sadhana-sand/20 text-sadhana-dark hover:bg-sadhana-sand/40'
             }`}
           >
             <Video className="w-4 h-4" />
-            <span>Video Referencial de las Instalaciones (4K & 360°)</span>
+            <span>{t('tour360.tab_video')}</span>
           </button>
 
           <button
             onClick={() => setActiveMode('panorama360')}
-            className={`px-5 py-2.5 rounded-2xl text-xs font-mono uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 font-bold shadow-sm ${
+            className={`px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-3 ${
               activeMode === 'panorama360'
-                ? 'bg-amber-600 text-white border-2 border-amber-600 shadow-amber-900/20'
-                : 'bg-stone-50 border border-stone-300 text-stone-700 hover:text-stone-950 hover:bg-stone-100'
+                ? 'bg-sadhana-primary text-white'
+                : 'bg-sadhana-sand/20 text-sadhana-dark hover:bg-sadhana-sand/40'
             }`}
           >
             <CompassIcon className="w-4 h-4" />
-            <span>Explorador Esférico Panorámico por Sectores</span>
+            <span>{t('tour360.tab_360')}</span>
           </button>
 
           <button
             onClick={() => setActiveMode('map')}
-            className={`px-5 py-2.5 rounded-2xl text-xs font-mono uppercase tracking-wider transition-all cursor-pointer flex items-center gap-2 font-bold shadow-sm ${
+            className={`px-6 py-3 rounded-full text-xs font-bold uppercase tracking-widest transition-colors flex items-center gap-3 ${
               activeMode === 'map'
-                ? 'bg-amber-600 text-white border-2 border-amber-600 shadow-amber-900/20'
-                : 'bg-stone-50 border border-stone-300 text-stone-700 hover:text-stone-950 hover:bg-stone-100'
+                ? 'bg-sadhana-primary text-white'
+                : 'bg-sadhana-sand/20 text-sadhana-dark hover:bg-sadhana-sand/40'
             }`}
           >
             <MapPin className="w-4 h-4" />
-            <span>Mapa Interactivo del Santuario</span>
+            <span>{t('tour360.tab_map')}</span>
           </button>
         </div>
 
         {/* ------------------------------------------------------------- */}
-        {/* MODE 1: VIDEO REFERENCIAL E INTERACTIVO DE LAS INSTALACIONES */}
+        {/* MODE 1: EXPLORADOR CINEMÁTICO (REPLACES YOUTUBE)            */}
         {/* ------------------------------------------------------------- */}
         {activeMode === 'video' && (
           <div className="space-y-6">
             
             {/* Simple Reseña (Description) */}
-            <div className="bg-stone-900/50 backdrop-blur-md border border-stone-800 rounded-2xl p-5 sm:p-6 shadow-xl text-stone-300 text-sm sm:text-base leading-relaxed">
+            <div className="bg-white/80 backdrop-blur-md border border-sadhana-dark/10 rounded-2xl p-5 sm:p-6 shadow-xl text-sadhana-brown/90 text-sm sm:text-base leading-relaxed font-medium">
               <p>
-                Sumérgete en la inmensidad del Valle Sagrado a través de esta expedición visual. Este documento audiovisual te lleva por las laderas, la andenería y la geografía sagrada que rodea a Pampa Ñusta en Pisac, ofreciendo una perspectiva única de la biodiversidad, la bioconstrucción y la herencia viva que protegemos a más de 3,300 metros sobre el nivel del mar.
+                Sumérgete en la inmensidad del Valle Sagrado a través de esta expedición visual en ultra alta definición. Este recorrido cinemático te transporta por la bioconstrucción y la herencia viva de cada una de nuestras instalaciones ecológicas.
               </p>
             </div>
 
-            {/* Main Video Viewport Container (Simplified) */}
-            <div className="relative w-full aspect-[16/9] min-h-[440px] sm:min-h-[560px] rounded-3xl overflow-hidden border border-emerald-500/30 shadow-2xl bg-stone-950">
-              {isVideoPlaying ? (
-                <iframe
-                  title="Pampa Ñusta Video Referencial"
-                  src="https://www.youtube-nocookie.com/embed/CheJWYQvP98?autoplay=1&rel=0&modestbranding=1"
-                  className="w-full h-full border-0 absolute inset-0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; vr"
-                  allowFullScreen
-                />
-              ) : (
+            {/* Cinematic Viewport Container */}
+            <div className="relative w-full aspect-[16/9] md:aspect-[21/9] bg-sadhana-dark overflow-hidden rounded-2xl shadow-2xl">
+              {PAMPA_NUSTA_FACILITIES.map((facility, idx) => (
                 <div
-                  className="relative w-full h-full flex flex-col items-center justify-center p-6 cursor-pointer group"
-                  onClick={() => setIsVideoPlaying(true)}
+                  key={facility.id}
+                  className={`absolute inset-0 transition-opacity duration-1000 ${
+                    activeCinematicIndex === idx ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                  }`}
                 >
                   <img
-                    src="https://img.youtube.com/vi/CheJWYQvP98/hqdefault.jpg"
-                    alt="Expedición Andina"
-                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                    src={facility.imageUrl}
+                    alt={facility.name}
+                    className={`w-full h-full object-cover transition-transform duration-[15000ms] ease-out ${
+                      activeCinematicIndex === idx ? 'scale-110' : 'scale-100'
+                    }`}
                   />
-                  <div className="absolute inset-0 bg-stone-950/60 backdrop-blur-[2px] group-hover:bg-stone-950/40 transition-colors" />
-
-                  <div className="relative z-10 text-center max-w-xl">
-                    <span className="px-3 py-1 rounded-full bg-emerald-500/30 border border-emerald-400/50 text-emerald-300 text-xs font-mono uppercase tracking-widest mb-4 inline-block font-bold">
-                      Documental Oficial · 22:45 min
+                  <div className="absolute inset-0 bg-gradient-to-t from-sadhana-dark via-sadhana-dark/20 to-transparent opacity-80" />
+                  
+                  <div className="absolute bottom-0 left-0 p-8 md:p-12 w-full">
+                    <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-sadhana-primary mb-4 block">
+                      {facility.category} · {facility.altitude}
                     </span>
-                    <h3 className="font-cinzel text-2xl sm:text-4xl font-extrabold text-white mb-6">
-                      Expedición Andina: Enigma y Entorno de Pisac
+                    <h3 className="text-3xl md:text-5xl font-black text-white mb-4">
+                      {facility.name}
                     </h3>
-
-                    <div className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl bg-emerald-600 text-white font-mono text-xs font-bold uppercase tracking-wider shadow-2xl group-hover:bg-emerald-500 transition-all">
-                      <Play className="w-5 h-5 fill-white" />
-                      <span>Reproducir Documental</span>
-                    </div>
+                    <p className="text-sadhana-sand/90 text-sm md:text-base font-medium max-w-2xl leading-relaxed">
+                      {facility.shortDesc}
+                    </p>
                   </div>
                 </div>
-              )}
+              ))}
+              
+              {/* Progress Indicators */}
+              <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+                {PAMPA_NUSTA_FACILITIES.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveCinematicIndex(idx)}
+                    className={`h-1.5 rounded-full transition-all duration-500 cursor-pointer ${
+                      activeCinematicIndex === idx ? 'w-10 bg-sadhana-primary' : 'w-2.5 bg-white/40 hover:bg-white/60'
+                    }`}
+                    aria-label={`Ver instalación ${idx + 1}`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         )}
@@ -451,7 +492,7 @@ export const VirtualTour360: React.FC = () => {
             {/* 360 Viewer Canvas Viewport */}
             <div
               ref={containerRef}
-              className="relative w-full aspect-[16/9] min-h-[460px] sm:min-h-[580px] rounded-3xl overflow-hidden border border-stone-300 shadow-2xl bg-stone-900 cursor-grab active:cursor-grabbing select-none"
+              className="relative w-full aspect-[16/9] md:aspect-[21/9] bg-sadhana-dark cursor-grab active:cursor-grabbing select-none overflow-hidden"
               onMouseDown={handleMouseDown}
               onMouseMove={handleMouseMove}
               onMouseUp={handleMouseUp}
@@ -463,9 +504,9 @@ export const VirtualTour360: React.FC = () => {
               <canvas ref={canvasRef} className="w-full h-full block" />
 
               {!imageLoaded && (
-                <div className="absolute inset-0 bg-stone-950 flex flex-col items-center justify-center gap-3">
-                  <div className="w-10 h-10 border-2 border-amber-400 border-t-transparent rounded-full animate-spin" />
-                  <span className="font-cinzel text-xs text-amber-300 uppercase tracking-widest">
+                <div className="absolute inset-0 bg-white/90 backdrop-blur-sm flex flex-col items-center justify-center gap-3">
+                  <div className="w-10 h-10 border-2 border-sadhana-primary border-t-transparent rounded-full animate-spin" />
+                  <span className="font-sans font-bold text-xs text-sadhana-primary uppercase tracking-widest">
                     Cargando Entorno 360° del Santuario...
                   </span>
                 </div>
@@ -488,20 +529,20 @@ export const VirtualTour360: React.FC = () => {
                       className="absolute z-20 group/marker"
                       onClick={(e) => {
                         e.stopPropagation();
-                        setSelectedFacility(facility);
+                        onOpenProject?.(facility);
                       }}
                     >
                       <button
-                        className="relative p-3 rounded-full bg-amber-500 text-stone-950 shadow-xl hover:scale-125 transition-transform cursor-pointer border-2 border-white ring-2 ring-amber-600/50"
+                        className="relative p-3 rounded-full bg-sadhana-orange text-white shadow-xl hover:scale-125 transition-transform cursor-pointer border-2 border-white ring-2 ring-sadhana-orange/50"
                         title={facility.name}
                       >
-                        <span className="absolute inset-0 rounded-full bg-amber-400 animate-ping opacity-60 pointer-events-none" />
-                        <Sparkles className="w-4 h-4 text-stone-950" />
+                        <span className="absolute inset-0 rounded-full bg-sadhana-orange animate-ping opacity-60 pointer-events-none" />
+                        <Sparkles className="w-4 h-4 text-white" />
                       </button>
 
-                      <div className="absolute left-1/2 -top-14 -translate-x-1/2 hidden group-hover/marker:flex flex-col items-center px-3 py-1.5 rounded-xl bg-stone-950/95 backdrop-blur-md border border-amber-500/60 text-stone-100 whitespace-nowrap shadow-2xl z-30 pointer-events-none">
-                        <span className="font-cinzel text-xs font-bold text-amber-300">{facility.name}</span>
-                        <span className="text-[10px] text-stone-400 font-mono">
+                      <div className="absolute left-1/2 -top-14 -translate-x-1/2 hidden group-hover/marker:flex flex-col items-center px-3 py-1.5 rounded-xl bg-white/95 backdrop-blur-md border border-sadhana-dark/10 text-sadhana-dark whitespace-nowrap shadow-2xl z-30 pointer-events-none">
+                        <span className="font-sans text-xs font-bold text-sadhana-primary">{facility.name}</span>
+                        <span className="text-[10px] text-sadhana-brown/70 font-mono font-medium">
                           {facility.quechuaName} · {facility.altitude}
                         </span>
                       </div>
@@ -510,13 +551,13 @@ export const VirtualTour360: React.FC = () => {
                 })}
 
               {/* HUD */}
-              <div className="absolute top-4 left-4 z-10 flex items-center gap-3 p-2.5 rounded-xl bg-stone-950/85 backdrop-blur-md border border-stone-800 text-xs text-stone-300 shadow-md">
-                <Compass className="w-4 h-4 text-amber-400" />
-                <div className="flex items-center gap-2 font-mono text-[11px]">
+              <div className="absolute top-4 left-4 z-10 flex items-center gap-3 p-2.5 rounded-xl bg-white/90 backdrop-blur-md border border-sadhana-dark/10 text-xs text-sadhana-dark shadow-md">
+                <Compass className="w-4 h-4 text-sadhana-orange" />
+                <div className="flex items-center gap-2 font-mono text-[11px] font-bold">
                   <span>GUIÑADA: {Math.round(yaw)}°</span>
-                  <span className="text-stone-600">|</span>
+                  <span className="text-sadhana-brown/30">|</span>
                   <span>CABECEO: {Math.round(pitch)}°</span>
-                  <span className="text-stone-600">|</span>
+                  <span className="text-sadhana-brown/30">|</span>
                   <span>ZOOM: {Math.round(fov)}°</span>
                 </div>
               </div>
@@ -527,8 +568,8 @@ export const VirtualTour360: React.FC = () => {
                   onClick={() => setIsAutoRotating(!isAutoRotating)}
                   className={`p-2.5 rounded-xl border backdrop-blur-md transition-all cursor-pointer ${
                     isAutoRotating
-                      ? 'bg-amber-500/20 border-amber-500/60 text-amber-300 shadow-md'
-                      : 'bg-stone-950/80 border-stone-800 text-stone-400 hover:text-stone-200'
+                      ? 'bg-sadhana-orange/10 border-sadhana-orange/30 text-sadhana-orange shadow-md'
+                      : 'bg-white/90 border-sadhana-dark/10 text-sadhana-brown/60 hover:text-sadhana-primary'
                   }`}
                   title={isAutoRotating ? 'Detener autorrotación' : 'Activar autorrotación'}
                 >
@@ -537,7 +578,7 @@ export const VirtualTour360: React.FC = () => {
 
                 <button
                   onClick={handleZoomIn}
-                  className="p-2.5 rounded-xl bg-stone-950/80 border border-stone-800 text-stone-300 hover:text-amber-300 hover:border-amber-500/50 backdrop-blur-md transition-all cursor-pointer"
+                  className="p-2.5 rounded-xl bg-white/90 border border-sadhana-dark/10 text-sadhana-brown/70 hover:text-sadhana-primary hover:border-sadhana-primary/30 backdrop-blur-md transition-all cursor-pointer shadow-sm"
                   title="Acercar (Zoom In)"
                 >
                   <ZoomIn className="w-4 h-4" />
@@ -545,7 +586,7 @@ export const VirtualTour360: React.FC = () => {
 
                 <button
                   onClick={handleZoomOut}
-                  className="p-2.5 rounded-xl bg-stone-950/80 border border-stone-800 text-stone-300 hover:text-amber-300 hover:border-amber-500/50 backdrop-blur-md transition-all cursor-pointer"
+                  className="p-2.5 rounded-xl bg-white/90 border border-sadhana-dark/10 text-sadhana-brown/70 hover:text-sadhana-primary hover:border-sadhana-primary/30 backdrop-blur-md transition-all cursor-pointer shadow-sm"
                   title="Alejar (Zoom Out)"
                 >
                   <ZoomOut className="w-4 h-4" />
@@ -553,16 +594,16 @@ export const VirtualTour360: React.FC = () => {
 
                 <button
                   onClick={toggleFullscreen}
-                  className="p-2.5 rounded-xl bg-stone-950/80 border border-stone-800 text-stone-300 hover:text-amber-300 hover:border-amber-500/50 backdrop-blur-md transition-all cursor-pointer"
+                  className="p-2.5 rounded-xl bg-white/90 border border-sadhana-dark/10 text-sadhana-brown/70 hover:text-sadhana-primary hover:border-sadhana-primary/30 backdrop-blur-md transition-all cursor-pointer shadow-sm"
                   title="Pantalla Completa"
                 >
                   {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
                 </button>
               </div>
 
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-full bg-stone-950/85 backdrop-blur-md border border-stone-800 text-xs text-stone-300 font-sans flex items-center gap-2 pointer-events-none shadow-lg">
-                <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
-                <span>Arrastra con el ratón o el dedo para rotar 360° · Pulsa en los iconos dorados para explorar las instalaciones</span>
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-full bg-white/90 backdrop-blur-md border border-sadhana-dark/10 text-xs text-sadhana-dark font-sans flex items-center gap-2 pointer-events-none shadow-lg font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-sadhana-primary animate-pulse" />
+                <span>{t('virtual_tour_extra.drag_instructions')}</span>
               </div>
             </div>
           </div>
@@ -573,76 +614,83 @@ export const VirtualTour360: React.FC = () => {
         {/* ------------------------------------------------------------- */}
         {activeMode === 'map' && (
           <div className="w-full mt-6">
-            <InteractiveSanctuaryMap />
+            <React.Suspense fallback={<div className="h-[400px] md:h-[600px] w-full flex flex-col items-center justify-center bg-sadhana-dark/5 rounded-3xl"><div className="w-8 h-8 border-4 border-sadhana-primary border-t-transparent rounded-full animate-spin mb-4"></div><span className="text-sm font-mono text-sadhana-brown/60 tracking-widest uppercase">Cargando mapa...</span></div>}>
+              <InteractiveSanctuaryMap />
+            </React.Suspense>
           </div>
         )}
 
         {/* ------------------------------------------------------------- */}
-        {/* THE 5 SANCTUARY FACILITIES & SERVICES CARDS STRIP */}
+        {/* THE 5 SANCTUARY FACILITIES & SERVICES */}
         {/* ------------------------------------------------------------- */}
-        <div className="mt-14">
-          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3 mb-6 pb-3 border-b border-stone-200">
-            <div>
-              <span className="text-xs font-mono uppercase tracking-widest text-amber-800 font-bold block mb-1">
-                Directorio Oficial del Santuario
-              </span>
-              <h3 className="font-cinzel text-2xl font-bold text-stone-950">
-                Las 5 Instalaciones y Servicios de Pampa Ñusta
-              </h3>
+        <div className="mt-32 md:mt-48">
+          <div className="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
+            <h3 className="text-4xl md:text-6xl font-black tracking-tighter text-sadhana-dark">
+              {t('virtual_tour_extra.instalaciones_title')}
+            </h3>
+            
+            <div className="flex gap-3">
+              <button 
+                onClick={() => scrollCarousel('left')}
+                className="w-12 h-12 rounded-full border border-sadhana-dark/20 text-sadhana-dark flex items-center justify-center hover:bg-sadhana-dark hover:text-white transition-colors cursor-pointer shadow-sm"
+                aria-label="Desplazar a la izquierda"
+              >
+                <ChevronRight className="w-5 h-5 rotate-180" />
+              </button>
+              <button 
+                onClick={() => scrollCarousel('right')}
+                className="w-12 h-12 rounded-full bg-sadhana-dark text-white flex items-center justify-center hover:bg-sadhana-primary transition-colors cursor-pointer shadow-sm"
+                aria-label="Desplazar a la derecha"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
             </div>
-            <p className="text-xs text-stone-600 font-mono">
-              Abiertas a investigadores, familias, mecenas y comunidades
-            </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div ref={carouselRef} className="flex overflow-x-auto hide-scrollbar snap-x snap-mandatory gap-6 md:gap-8 pb-12 cursor-grab active:cursor-grabbing px-6 md:px-12 -mx-6 md:-mx-12 scroll-smooth">
             {PAMPA_NUSTA_FACILITIES.map((facility, idx) => (
               <div
                 key={facility.id}
-                className="rounded-2xl bg-stone-50 border border-stone-200 hover:border-emerald-600 hover:bg-white text-left transition-all flex flex-col group shadow-sm hover:shadow-md overflow-hidden"
+                className="relative group cursor-pointer flex-shrink-0 w-[85vw] md:w-[450px] aspect-[4/5] snap-center overflow-hidden bg-sadhana-dark"
+                onClick={() => onOpenProject?.(facility)}
               >
-                {/* Thumbnail Image Header */}
-                <div className="w-full h-36 relative overflow-hidden bg-stone-900 shrink-0">
-                  <img 
-                    src={facility.imageUrl} 
-                    alt={facility.name} 
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
-                  />
-                  <div className="absolute inset-0 bg-stone-900/10 group-hover:bg-transparent transition-colors" />
-                  <div className="absolute top-2 left-2 px-2 py-0.5 rounded border border-white/20 bg-black/40 backdrop-blur-sm text-[10px] font-mono text-white font-bold uppercase">
-                    SECTOR 0{idx + 1}
-                  </div>
-                </div>
+                {/* Background Image */}
+                <img 
+                  src={facility.imageUrl} 
+                  alt={facility.name} 
+                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
+                />
+                
+                {/* Dark Overlays for Cinematic Effect */}
+                <div className="absolute inset-0 bg-sadhana-dark/40 group-hover:bg-sadhana-dark/20 transition-colors duration-500" />
+                <div className="absolute inset-0 bg-gradient-to-t from-sadhana-dark via-sadhana-dark/20 to-transparent opacity-90" />
 
-                {/* Card Content */}
-                <div className="p-4 flex flex-col justify-between flex-1">
-                  <div>
-                    <h4 className="font-cinzel text-sm font-bold text-stone-950 group-hover:text-emerald-900 transition-colors line-clamp-2 leading-snug">
+                {/* Card Content Overlay */}
+                <div className="absolute inset-0 p-6 md:p-10 flex flex-col justify-between">
+                  {/* Top Bar */}
+                  <div className="flex justify-between items-start">
+                    <div className="text-xs md:text-sm font-bold text-sadhana-primary font-mono uppercase tracking-[0.3em]">
+                      0{idx + 1}
+                    </div>
+                    <div className="p-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-white opacity-0 group-hover:opacity-100 transition-opacity duration-500 transform translate-y-4 group-hover:translate-y-0">
+                      <ExternalLink className="w-5 h-5" />
+                    </div>
+                  </div>
+
+                  {/* Bottom Info */}
+                  <div className="transform translate-y-8 group-hover:translate-y-0 transition-transform duration-500">
+                    <h4 className="font-black text-2xl md:text-3xl text-white uppercase tracking-tighter mb-3 drop-shadow-md">
                       {facility.name}
                     </h4>
-
-                    <span className="text-[10px] text-emerald-800 font-serif italic block mt-0.5 line-clamp-1">
-                      {facility.quechuaName}
-                    </span>
-
-                    <p className="text-xs text-stone-600 font-sans mt-2 line-clamp-3 leading-relaxed">
+                    <p className="text-sadhana-sand/90 text-sm leading-relaxed line-clamp-2 mb-6 font-medium">
                       {facility.shortDesc}
                     </p>
-                  </div>
-
-                  <div className="mt-4 pt-3 border-t border-stone-200 space-y-2">
-                    <div className="flex items-center gap-1.5 text-[10px] font-mono text-stone-500">
-                      <Users className="w-3 h-3 text-emerald-700" />
-                      <span>{facility.capacity}</span>
+                    
+                    {/* Fake Button Line */}
+                    <div className="flex items-center gap-3 text-xs uppercase tracking-[0.2em] font-bold text-white group-hover:text-sadhana-primary transition-colors">
+                      <span className="w-8 h-px bg-current transition-all duration-300 group-hover:w-12"></span>
+                      <span>{t('modules.explore_btn')}</span>
                     </div>
-
-                    <button
-                      onClick={() => setSelectedFacility(facility)}
-                      className="w-full py-2 px-3 rounded-xl bg-emerald-700 hover:bg-emerald-600 text-white font-mono text-[11px] font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-sm"
-                    >
-                      <span>Ver Servicios</span>
-                      <ChevronRight className="w-3.5 h-3.5" />
-                    </button>
                   </div>
                 </div>
               </div>
@@ -652,130 +700,7 @@ export const VirtualTour360: React.FC = () => {
 
       </div>
 
-      {/* ------------------------------------------------------------- */}
-      {/* SELECTED FACILITY & SERVICES MODAL DRAWER */}
-      {/* ------------------------------------------------------------- */}
-      {selectedFacility && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/80 backdrop-blur-md animate-fadeIn">
-          <div className="relative w-full max-w-3xl bg-white border border-stone-200 rounded-3xl p-6 sm:p-8 shadow-2xl overflow-y-auto max-h-[92vh]">
-            <button
-              onClick={() => setSelectedFacility(null)}
-              className="absolute top-4 right-4 p-2.5 rounded-xl bg-stone-100 text-stone-500 hover:text-stone-950 hover:bg-stone-200 transition-colors cursor-pointer"
-              aria-label="Cerrar modal"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
-            {/* Category & Altitude Badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-amber-50 border border-amber-200 text-amber-900 text-xs font-mono uppercase tracking-wider mb-2 font-bold">
-              <Sparkles className="w-3.5 h-3.5 text-amber-700" />
-              <span>{selectedFacility.category} · {selectedFacility.altitude}</span>
-            </div>
-
-            <h3 className="font-cinzel text-2xl sm:text-3xl font-extrabold text-stone-950">
-              {selectedFacility.name}
-            </h3>
-            <p className="text-amber-800 font-serif italic text-sm mt-0.5">
-              {selectedFacility.quechuaName}
-            </p>
-
-            {/* Facility Image with Overlay */}
-            <div className="mt-4 aspect-[16/9] rounded-2xl overflow-hidden border border-stone-200 relative shadow-sm">
-              <img
-                src={selectedFacility.imageUrl}
-                alt={selectedFacility.name}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute bottom-3 left-3 px-3 py-1 rounded-lg bg-stone-950/80 text-stone-200 text-[11px] font-mono backdrop-blur-sm">
-                Sector en Pampa Ñusta, Pisac · 3,347 msnm
-              </div>
-            </div>
-
-            {/* Full Description */}
-            <p className="mt-5 text-stone-700 text-sm sm:text-base leading-relaxed font-sans">
-              {selectedFacility.fullDesc}
-            </p>
-
-            {/* Structured Services Offered List */}
-            <div className="mt-6 space-y-3">
-              <h4 className="font-cinzel text-xs uppercase tracking-widest text-amber-900 font-bold flex items-center gap-2">
-                <Layers className="w-4 h-4 text-amber-700" />
-                Servicios del Santuario en esta Instalación:
-              </h4>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                {selectedFacility.servicesOffered.map((service, i) => (
-                  <div key={i} className="p-4 rounded-xl bg-stone-50 border border-stone-200 space-y-1.5 shadow-sm">
-                    <div className="flex items-center gap-1.5 text-amber-900 font-bold font-cinzel text-xs">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
-                      <span>{service.title}</span>
-                    </div>
-                    <p className="text-[11px] text-stone-600 font-sans leading-relaxed">
-                      {service.description}
-                    </p>
-                    <span className="text-[10px] font-mono text-stone-500 block pt-1 border-t border-stone-200/80">
-                      Público: {service.targetAudience}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Infrastructure Specs */}
-            <div className="mt-6 space-y-2">
-              <h4 className="font-cinzel text-xs uppercase tracking-widest text-amber-900 font-bold flex items-center gap-1.5">
-                <ShieldCheck className="w-4 h-4 text-emerald-700" />
-                Especificaciones de Infraestructura & Bioconstrucción:
-              </h4>
-              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-stone-700 font-sans">
-                {selectedFacility.infrastructureDetails.map((detail, i) => (
-                  <li key={i} className="flex items-start gap-2 bg-stone-50 p-2.5 rounded-lg border border-stone-200">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-700 mt-1.5 shrink-0" />
-                    <span>{detail}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Logistics & Booking info */}
-            <div className="mt-6 p-4 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-stone-800 space-y-2">
-              <div className="flex flex-wrap items-center justify-between gap-2 font-mono text-[11px]">
-                <div className="flex items-center gap-1.5 text-stone-700">
-                  <Calendar className="w-3.5 h-3.5 text-amber-800" />
-                  <span><strong>Horario:</strong> {selectedFacility.schedule}</span>
-                </div>
-                <div className="flex items-center gap-1.5 text-stone-700">
-                  <Users className="w-3.5 h-3.5 text-amber-800" />
-                  <span><strong>Capacidad:</strong> {selectedFacility.capacity}</span>
-                </div>
-              </div>
-              <p className="text-[11px] text-stone-600">
-                Las visitas y actividades se realizan bajo principios de respeto comunitario andino (Ayni) y reciprocidad voluntaria con la reserva natural.
-              </p>
-            </div>
-
-            {/* Modal Bottom CTAs */}
-            <div className="mt-6 pt-4 border-t border-stone-200 flex flex-col sm:flex-row items-center justify-between gap-3">
-              <a
-                href={`https://wa.me/51958050928?text=Hola%20Pampa%20%C3%91usta%2C%20deseo%20m%C3%A1s%20informaci%C3%B3n%20y%20agendar%20una%20visita%20para%20el%20sector%3A%20${encodeURIComponent(selectedFacility.name)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-mono font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-md"
-              >
-                <MessageCircle className="w-4 h-4 fill-white" />
-                <span>Consultar por WhatsApp (+51 958 050 928)</span>
-              </a>
-
-              <button
-                onClick={() => setSelectedFacility(null)}
-                className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-stone-100 hover:bg-stone-200 text-stone-700 font-cinzel font-bold text-xs uppercase tracking-wider transition-colors cursor-pointer border border-stone-300"
-              >
-                Cerrar Ficha
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </section>
+    </>
   );
 };

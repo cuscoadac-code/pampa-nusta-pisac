@@ -1,0 +1,24 @@
+{
+  "header": {
+    "home": "Home",
+    "location": "Location",
+    "facilities": "Facilities",
+    "donate": "Donate",
+    "contact": "Contact",
+    "audioLog": "Audio Log",
+    "scenes": "Scenes",
+    "mute": "Mute",
+    "audio": "Audio"
+  },
+  "hero": {
+    "audioOn": "NATURE AUDIO",
+    "audioOff": "ACTIVATE AUDIO",
+    "video": "Video",
+    "poster": "Poster",
+    "badge": "LIVING ECOVILLAGE · SACRED VALLEY",
+    "title": "PAMPA ÑUSTA",
+    "subtitle": "LIVING SANCTUARY",
+    "enter": "Enter",
+    "discover": "Discover"
+  }
+}

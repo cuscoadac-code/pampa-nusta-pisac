@@ -95,17 +95,17 @@ export const CinematicTrailerModal: React.FC<CinematicTrailerModalProps> = ({
   const currentScene = TRAILER_SCENES[activeSceneIndex];
 
   return (
-    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/95 backdrop-blur-xl p-2 sm:p-6 animate-fadeIn">
+    <div className="fixed inset-0 z-[1000] flex items-center justify-center bg-white/95 backdrop-blur-xl p-2 sm:p-6 animate-fadeIn">
       {/* Natural Sanctuary Frame Container */}
-      <div className="relative w-full max-w-6xl bg-[#14100c] border border-[#6b492d] rounded-2xl overflow-hidden shadow-2xl shadow-black/80 flex flex-col">
+      <div className="relative w-full max-w-6xl bg-white border border-sadhana-dark/10 rounded-2xl overflow-hidden shadow-2xl shadow-sadhana-dark/10 flex flex-col">
         {/* Sanctuary Header */}
-        <div className="bg-[#100c09] px-5 py-3 border-b border-[#3b2c20] flex items-center justify-between z-20">
+        <div className="bg-sadhana-sand/50 px-5 py-3 border-b border-sadhana-dark/5 flex items-center justify-between z-20">
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-[#322318] border border-[#6b492d] text-[10px] font-mono tracking-widest text-[#e5aa5d] font-bold uppercase">
-              <Leaf className="w-3 h-3 text-[#d8974a]" />
+            <div className="flex items-center gap-1.5 px-2 py-0.5 rounded bg-sadhana-primary/10 border border-sadhana-primary/20 text-[10px] font-mono tracking-widest text-sadhana-primary font-bold uppercase">
+              <Leaf className="w-3 h-3 text-sadhana-primary" />
               SANTUARIO VIVO · 4K HDR
             </div>
-            <span className="hidden sm:inline text-xs text-[#a89582] font-mono">
+            <span className="hidden sm:inline text-xs text-sadhana-brown font-mono font-medium">
               PAMPA ÑUSTA: RESERVA NATURAL (EXPLORACIÓN 360)
             </span>
           </div>
@@ -113,14 +113,14 @@ export const CinematicTrailerModal: React.FC<CinematicTrailerModalProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsMuted(!isMuted)}
-              className="p-1.5 rounded-lg bg-stone-900 border border-stone-800 text-stone-300 hover:text-amber-400 transition-colors"
+              className="p-1.5 rounded-lg bg-white border border-sadhana-dark/10 text-sadhana-brown hover:text-sadhana-primary transition-colors shadow-sm"
               title={isMuted ? 'Activar sonido' : 'Silenciar'}
             >
-              {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-amber-400" />}
+              {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4 text-sadhana-primary" />}
             </button>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg bg-stone-900 border border-stone-800 text-stone-300 hover:text-red-400 hover:border-red-500/40 transition-colors"
+              className="p-1.5 rounded-lg bg-white border border-sadhana-dark/10 text-sadhana-brown hover:text-red-500 hover:border-red-500/40 transition-colors shadow-sm"
               title="Cerrar reproductor"
             >
               <X className="w-5 h-5" />
@@ -129,7 +129,7 @@ export const CinematicTrailerModal: React.FC<CinematicTrailerModalProps> = ({
         </div>
 
         {/* Video / Visual Screen with 2.39:1 ratio */}
-        <div className="relative aspect-[21/9] w-full bg-black overflow-hidden group">
+        <div className="relative aspect-[21/9] w-full bg-sadhana-sand overflow-hidden group">
           <video
             key={currentScene.videoUrl}
             src={currentScene.videoUrl}
@@ -138,29 +138,28 @@ export const CinematicTrailerModal: React.FC<CinematicTrailerModalProps> = ({
             loop
             muted={isMuted}
             playsInline
-            className="w-full h-full object-cover filter brightness-90 contrast-110"
+            className="w-full h-full object-cover opacity-90"
           />
 
-          {/* Cinematic Vignette */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-black/60 pointer-events-none" />
-          <div className="absolute inset-0 cinema-vignette pointer-events-none" />
+          {/* Daylight Vignette */}
+          <div className="absolute inset-0 bg-gradient-to-t from-white/90 via-white/30 to-white/10 pointer-events-none" />
 
           {/* Film Title Watermark */}
           <div className="absolute top-6 left-6 z-10">
-            <span className="font-cinzel text-xs tracking-widest text-amber-400/80 uppercase font-bold block">
+            <span className="font-mono text-xs tracking-widest text-sadhana-primary font-bold block mb-1">
               Escena {currentScene.id} de {TRAILER_SCENES.length} · {currentScene.time}
             </span>
-            <h3 className="font-cinzel text-xl sm:text-3xl text-stone-100 font-bold tracking-tight drop-shadow-md">
+            <h3 className="font-sans text-xl sm:text-3xl text-sadhana-dark font-extrabold tracking-tight drop-shadow-sm">
               {currentScene.title}
             </h3>
-            <p className="text-xs sm:text-sm text-stone-300 font-light mt-1 max-w-xl drop-shadow">
+            <p className="text-xs sm:text-sm text-sadhana-brown font-medium mt-1 max-w-xl">
               {currentScene.subtitle}
             </p>
           </div>
 
           {/* Quote Banner */}
           <div className="absolute bottom-6 left-6 right-6 z-10 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
-            <p className="font-cinzel text-sm sm:text-base italic text-amber-200/90 max-w-2xl bg-black/60 backdrop-blur-md px-4 py-2.5 rounded-xl border border-amber-500/20">
+            <p className="font-sans text-sm sm:text-base italic font-medium text-sadhana-primary max-w-2xl bg-white/80 backdrop-blur-md px-4 py-2.5 rounded-xl border border-sadhana-primary/20 shadow-sm">
               {currentScene.quote}
             </p>
 
@@ -169,7 +168,7 @@ export const CinematicTrailerModal: React.FC<CinematicTrailerModalProps> = ({
                 onClose();
                 onSelectModule(currentScene.moduleId);
               }}
-              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-stone-950 font-bold text-xs tracking-wider uppercase font-cinzel flex items-center gap-2 shadow-lg shadow-amber-900/40 hover:scale-[1.03] transition-all whitespace-nowrap"
+              className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-sadhana-primary to-sadhana-orange text-white font-bold text-xs tracking-wider uppercase font-mono flex items-center gap-2 shadow-lg hover:scale-[1.03] transition-all whitespace-nowrap"
             >
               <span>Explorar Módulo</span>
               <ChevronRight className="w-4 h-4" />
@@ -178,13 +177,13 @@ export const CinematicTrailerModal: React.FC<CinematicTrailerModalProps> = ({
         </div>
 
         {/* Scene Selector Strip (Film Roll) */}
-        <div className="bg-stone-950 px-4 py-3 border-t border-stone-800/80">
+        <div className="bg-white px-4 py-3 border-t border-sadhana-dark/10">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-mono uppercase tracking-widest text-stone-400 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+            <span className="text-[11px] font-mono uppercase tracking-widest text-sadhana-brown/70 font-bold flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-sadhana-orange" />
               Carrete de Capítulos de la Ecoaldea
             </span>
-            <span className="text-[11px] font-mono text-amber-400">
+            <span className="text-[11px] font-mono text-sadhana-primary font-bold">
               {activeSceneIndex + 1} / {TRAILER_SCENES.length}
             </span>
           </div>
@@ -198,18 +197,18 @@ export const CinematicTrailerModal: React.FC<CinematicTrailerModalProps> = ({
                   onClick={() => setActiveSceneIndex(idx)}
                   className={`relative p-2 rounded-xl border text-left transition-all overflow-hidden ${
                     isCurrent
-                      ? 'border-amber-400 bg-amber-500/10 shadow-md shadow-amber-500/20'
-                      : 'border-stone-800 hover:border-stone-700 bg-stone-900/50 opacity-70 hover:opacity-100'
+                      ? 'border-sadhana-primary bg-sadhana-primary/5 shadow-sm'
+                      : 'border-sadhana-dark/5 hover:border-sadhana-primary/30 bg-sadhana-sand/30 hover:bg-white'
                   }`}
                 >
-                  <span className="block text-[9px] font-mono text-amber-400 tracking-wider font-bold">
+                  <span className={`block text-[9px] font-mono tracking-wider font-bold ${isCurrent ? 'text-sadhana-orange' : 'text-sadhana-brown/60'}`}>
                     {scene.time}
                   </span>
-                  <span className="block font-cinzel text-[11px] font-bold text-stone-200 truncate mt-0.5">
+                  <span className={`block font-sans text-[11px] font-bold truncate mt-0.5 ${isCurrent ? 'text-sadhana-dark' : 'text-sadhana-brown'}`}>
                     {scene.title.split(' ')[0]} {scene.title.split(' ')[1] || ''}
                   </span>
                   {isCurrent && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-amber-400" />
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-sadhana-primary" />
                   )}
                 </button>
               );

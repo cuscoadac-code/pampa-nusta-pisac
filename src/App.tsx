@@ -1,124 +1,99 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import Lenis from '@studio-freight/lenis';
+import { Menu } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+
+// Core 1820 Layout Components
 import { Preloader } from './components/Preloader';
-import { OpeningCredits } from './components/OpeningCredits';
-import { Header } from './components/Header';
-import { Hero } from './components/Hero';
-import { ReferentialVideoShowcase } from './components/ReferentialVideoShowcase';
-import { SecurityComplianceModal } from './components/SecurityComplianceModal';
-import { TenOutOfTenShowreel } from './components/TenOutOfTenShowreel';
-import { DillingerContentSelector } from './components/DillingerContentSelector';
-import { CustomCursor } from './components/CustomCursor';
-import { NustaScrollTelling } from './components/NustaScrollTelling';
-import { WachumaBotanicalSection } from './components/WachumaBotanicalSection';
-import { RiverTimeline } from './components/RiverTimeline';
+import { GlobalAudioPlayer } from './components/1820/GlobalAudioPlayer';
+import { FullscreenMenu } from './components/1820/FullscreenMenu';
+
+import { EcoaldeaModules } from './components/EcoaldeaModules';
+import { ImpactStoryScroll } from './components/ImpactStoryScroll';
 import { SocialProofSection } from './components/SocialProofSection';
+import { DonationBanner } from './components/DonationBanner';
 import { DonationSystem } from './components/DonationSystem';
+import { LocationSection } from './components/LocationSection';
+import { FaqSection } from './components/FaqSection';
 import { Footer } from './components/Footer';
+import { IdentitySection } from './components/IdentitySection';
+import { SpiritualLeaders } from './components/SpiritualLeaders';
+import { MediaHub } from './components/MediaHub';
+import { JoinUsSection } from './components/JoinUsSection';
+
+// Modals & Overlays
+import { CustomCursor } from './components/CustomCursor';
+import { CinematicTransitions } from './components/CinematicTransitions';
+import { ConectaPampaNustaChatbot } from './components/ConectaPampaNustaChatbot';
+import { LanguageSwitcher } from './components/LanguageSwitcher';
+import { SecurityComplianceModal } from './components/SecurityComplianceModal';
 import { ModuleExperienceModal } from './components/ModuleExperienceModal';
 import { MobileCinematicDock } from './components/MobileCinematicDock';
-import { ConectaPampaNustaChatbot } from './components/ConectaPampaNustaChatbot';
-import { LocationSection } from './components/LocationSection';
-
-const InterdimensionalJourney = lazy(() => import('./components/InterdimensionalJourney').then(module => ({ default: module.InterdimensionalJourney })));
+import { useEcoaldeaModules } from './data/ecoaldeaModules';
+import { EcoaldeaModule } from './types';
+import { SanctuaryFacility } from './data/sanctuaryFacilities';
+import { ProjectLandingPage } from './components/ProjectLandingPage';
+import { NustaScrollTelling } from './components/NustaScrollTelling';
 
 const VirtualTour360 = lazy(() => import('./components/VirtualTour360').then(module => ({ default: module.VirtualTour360 })));
 const CinematicTrailerModal = lazy(() => import('./components/CinematicTrailerModal').then(module => ({ default: module.CinematicTrailerModal })));
-import { ECOALDEA_MODULES } from './data/ecoaldeaModules';
-import { SHOWREEL_ITEMS, ShowreelItem } from './data/showreelData';
-import { ThemeMode, EcoaldeaModule } from './types';
-import { MoviePlayerUI } from './components/MoviePlayerUI';
+
+const WachumaIcon = ({ className }: { className?: string }) => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    {/* Columna Izquierda */}
+    <path d="M6 22V10c0-1 1-2 2-2s2 1 2 2v12" fill="currentColor" fillOpacity="0.1" />
+    <path d="M6 22V10c0-1 1-2 2-2s2 1 2 2v12" />
+    <path d="M8 9v13" strokeWidth="1" strokeOpacity="0.5" />
+    
+    {/* Columna Central (Más alta) */}
+    <path d="M10 22V4c0-1 1-2 2-2s2 1 2 2v18" fill="currentColor" fillOpacity="0.15" />
+    <path d="M10 22V4c0-1 1-2 2-2s2 1 2 2v18" />
+    <path d="M12 3v19" strokeWidth="1" strokeOpacity="0.5" />
+    
+    {/* Columna Derecha */}
+    <path d="M14 22V13c0-.8.8-1.5 1.5-1.5s1.5.8 1.5 1.5v9" fill="currentColor" fillOpacity="0.1" />
+    <path d="M14 22V13c0-.8.8-1.5 1.5-1.5s1.5.8 1.5 1.5v9" />
+    <path d="M15.5 12v10" strokeWidth="1" strokeOpacity="0.5" />
+    
+    {/* Espinas sutiles (Areolas) */}
+    <path d="M10 7h-.5 M14 9h.5 M10 14h-.5 M14 16h.5 M6 13h-.5 M10 18h-.5 M17 17h.5" strokeWidth="1.5" />
+  </svg>
+);
 
 export default function App() {
-  const [showIntro, setShowIntro] = useState(true);
-  const [themeMode, setThemeMode] = useState<ThemeMode>('hanan');
-  const [isCinemaMode, setIsCinemaMode] = useState<boolean>(true); // Default to true in documentary mode
-  const [isTrailerOpen, setIsTrailerOpen] = useState<boolean>(false);
-  const [isChatbotOpen, setIsChatbotOpen] = useState<boolean>(false);
-  const [isJourneyOpen, setIsJourneyOpen] = useState<boolean>(false);
-  const [isSecurityModalOpen, setIsSecurityModalOpen] = useState<boolean>(false);
+  const { t } = useTranslation();
+  const ECOALDEA_MODULES = useEcoaldeaModules();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isTrailerOpen, setIsTrailerOpen] = useState(false);
+  const [isChatbotOpen, setIsChatbotOpen] = useState(false);
+  const [isSecurityModalOpen, setIsSecurityModalOpen] = useState(false);
   const [securityModalTab, setSecurityModalTab] = useState<'guarantee' | 'ssl' | 'altitude' | 'payments'>('guarantee');
   const [selectedExperienceModule, setSelectedExperienceModule] = useState<EcoaldeaModule | null>(null);
-  const [activeExperienceView, setActiveExperienceView] = useState<'dillinger' | 'reel' | 'full'>('dillinger');
-  const [selectedSlideIndex, setSelectedSlideIndex] = useState<number>(0);
   
-  // Movie Player States
-  const [isAutoPlaying, setIsAutoPlaying] = useState(false);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [currentSceneName, setCurrentSceneName] = useState('Escena 1: Introducción');
-
-  // Track scrolling for progress bar
-  useEffect(() => {
-    const container = document.querySelector('.scene-container');
-    if (!container) return;
-
-    const handleScroll = () => {
-      const { scrollTop, scrollHeight, clientHeight } = container;
-      const progress = (scrollTop / (scrollHeight - clientHeight)) * 100;
-      setScrollProgress(progress || 0);
-
-      // Determine current scene by dividing progress roughly
-      if (progress < 15) setCurrentSceneName('El Origen de Pampa Ñusta');
-      else if (progress < 30) setCurrentSceneName('Santuario Wachuma');
-      else if (progress < 45) setCurrentSceneName('Recorrido Virtual 360°');
-      else if (progress < 60) setCurrentSceneName('El Río Willakamayu');
-      else if (progress < 75) setCurrentSceneName('Críticas & Testimonios');
-      else if (progress < 90) setCurrentSceneName('Mecenazgo Patrimonial');
-      else setCurrentSceneName('Créditos Finales');
-    };
-
-    container.addEventListener('scroll', handleScroll);
-    return () => container.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // AutoPlay logic
-  useEffect(() => {
-    const container = document.querySelector('.scene-container') as HTMLElement | null;
-    if (!container || !isAutoPlaying) return;
-
-    // Disable scroll snap during autoplay for smooth scrolling
-    container.style.scrollSnapType = 'none';
-
-    let animationId: number;
-    const playFrame = () => {
-      container.scrollTop += 4.5; // Auto-scroll speed (3x faster)
-      
-      // Stop if reached bottom
-      if (container.scrollTop >= container.scrollHeight - container.clientHeight) {
-        setIsAutoPlaying(false);
-        return;
-      }
-      animationId = requestAnimationFrame(playFrame);
-    };
-
-    animationId = requestAnimationFrame(playFrame);
-
-    return () => {
-      cancelAnimationFrame(animationId);
-      container.style.scrollSnapType = 'y mandatory';
-    };
-  }, [isAutoPlaying]);
+  const [currentPage, setCurrentPage] = useState<'home' | 'mecenazgo' | 'project-landing'>('home');
+  const [selectedSanctuaryFacility, setSelectedSanctuaryFacility] = useState<SanctuaryFacility | null>(null);
 
   // Initialize Lenis for Smooth Scrolling
   useEffect(() => {
-    // Lenis conflicts with native scroll-snap, but we keep it for elements inside scenes if needed, 
-    // or just disable it entirely for the true "cut" effect. We will disable smooth scroll 
-    // and let CSS Scroll Snap handle the scenes.
-    return () => {};
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    });
+
+    let rafId: number;
+
+    function raf(time: number) {
+      lenis.raf(time);
+      rafId = requestAnimationFrame(raf);
+    }
+    rafId = requestAnimationFrame(raf);
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      lenis.destroy();
+    };
   }, []);
-
-  const handleOpenSecurityModal = (tab: 'guarantee' | 'ssl' | 'altitude' | 'payments' = 'guarantee') => {
-    setSecurityModalTab(tab);
-    setIsSecurityModalOpen(true);
-  };
-
-  const toggleTheme = () => {
-    setThemeMode((prev) => (prev === 'hanan' ? 'hurin' : 'hanan'));
-  };
-
-  const toggleCinemaMode = () => {
-    setIsCinemaMode((prev) => !prev);
-  };
 
   const scrollToSection = (sectionId: string) => {
     const el = document.getElementById(sectionId);
@@ -127,166 +102,158 @@ export default function App() {
     }
   };
 
-  const handleSelectModuleById = (moduleId: string) => {
-    const mod = ECOALDEA_MODULES.find((m) => m.id === moduleId) || ECOALDEA_MODULES[0];
-    setSelectedExperienceModule(mod);
+  const handleOpenSecurityModal = (tab: 'guarantee' | 'ssl' | 'altitude' | 'payments' = 'guarantee') => {
+    setSecurityModalTab(tab);
+    setIsSecurityModalOpen(true);
   };
 
-  const handleOpenExperienceFromShowreelItem = (item: ShowreelItem) => {
-    const match = ECOALDEA_MODULES.find((m) => m.id === item.id) || ECOALDEA_MODULES[0];
-    setSelectedExperienceModule(match);
-  };
+  if (currentPage === 'mecenazgo') {
+    return (
+      <div className="min-h-screen bg-sadhana-dark text-white font-sans relative overflow-x-hidden selection:bg-sadhana-primary selection:text-white">
+        <CustomCursor />
+        <GlobalAudioPlayer />
+        
+        <header className="fixed top-0 left-0 w-full z-50 p-6 md:p-8 flex justify-between items-center text-white mix-blend-difference">
+          <button onClick={() => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setCurrentPage('home');
+          }} className="flex items-center gap-2 cursor-pointer group">
+            <span className="text-xl font-bold tracking-[0.2em]">{t('nav.pampa')}</span>
+            <WachumaIcon className="w-5 h-5 opacity-90 group-hover:text-sadhana-primary transition-colors" />
+          </button>
+          <button 
+            onClick={() => setCurrentPage('home')}
+            className="flex items-center gap-3 hover:text-sadhana-primary transition-colors cursor-pointer"
+          >
+            <span className="text-xs uppercase tracking-widest font-bold">Volver al Inicio</span>
+          </button>
+        </header>
+
+        <DonationSystem />
+        
+        <Footer
+          onSelectModule={(id) => setSelectedExperienceModule(ECOALDEA_MODULES.find(m => m.id === id) || null)}
+          onOpenSecurityModal={handleOpenSecurityModal}
+        />
+      </div>
+    );
+  }
+
+  if (currentPage === 'project-landing' && selectedSanctuaryFacility) {
+    return (
+      <>
+        <CustomCursor />
+        <GlobalAudioPlayer />
+        <ProjectLandingPage 
+          project={selectedSanctuaryFacility} 
+          onBack={() => setCurrentPage('home')} 
+        />
+      </>
+    );
+  }
 
   return (
-    <div
-      className={`min-h-screen text-sadhana-brown bg-sadhana-bg transition-colors duration-700 font-sans relative overflow-x-hidden scene-container`}
-    >
-      {/* 0. OPENING CREDITS (DOCUMENTARY INTRO) */}
-      {showIntro && <OpeningCredits onComplete={() => setShowIntro(false)} />}
-
-      {/* 4. ANIMACIÓN DE CARGA (PRELOADER) */}
+    <div className="min-h-screen bg-white text-sadhana-dark font-sans relative overflow-x-hidden selection:bg-sadhana-primary selection:text-white">
+      {/* 1. INITIAL LOADERS & AUDIO */}
       <Preloader />
+      <CustomCursor />      {/* 2. FIXED NAVIGATION HEADER (Minimalist) */}
+      <header className="fixed top-0 left-0 w-full z-50 p-6 md:p-8 flex justify-between items-center mix-blend-difference text-white">
+        <button onClick={() => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }} className="flex items-center gap-2 cursor-pointer group">
+          <span className="text-xl font-bold tracking-[0.2em] uppercase">{t('nav.pampa')}</span>
+          <WachumaIcon className="w-5 h-5 opacity-90 group-hover:text-sadhana-primary transition-colors" />
+        </button>
+        <div className="flex items-center gap-3 md:gap-6">
+          <GlobalAudioPlayer />
+          <LanguageSwitcher />
+          <button 
+            onClick={() => setIsMenuOpen(true)}
+            className="flex items-center gap-3 hover:text-sadhana-primary transition-colors cursor-pointer"
+          >
+            <span className="text-xs uppercase tracking-widest hidden md:inline font-medium">{t('nav.menu')}</span>
+            <Menu className="w-8 h-8" />
+          </button>
+        </div>
+      </header>
 
-      {/* Dillinger & 10/10 Hybrid Custom Cursor */}
-      <CustomCursor />
+      <FullscreenMenu 
+        isOpen={isMenuOpen} 
+        onClose={() => setIsMenuOpen(false)} 
+        onNavigate={scrollToSection} 
+      />
 
-      {/* 2.39:1 Cinema Letterbox Overlays when Cinema Mode is active */}
-      {isCinemaMode && (
-        <>
-          <div className="cinema-letterbox-top" aria-hidden="true">
-            {/* Optional Top Letterbox Content (e.g. Logo watermark) */}
-          </div>
-          <div className="cinema-letterbox-bottom">
-            <MoviePlayerUI 
-              isPlaying={isAutoPlaying}
-              onTogglePlay={() => setIsAutoPlaying(!isAutoPlaying)}
-              progress={scrollProgress}
-              currentSceneName={currentSceneName}
-            />
-          </div>
-        </>
-      )}
+      {/* 4. MAIN CONTENT SECTIONS (Parallax & Normal Scroll) */}
+      <div className="relative z-10 bg-white">
 
-      {/* Global Cinematic Navigation Header */}
-      <Header
-        themeMode={themeMode}
-        onToggleTheme={toggleTheme}
-        onOpenDonate={() => scrollToSection('donaciones')}
-        isCinemaMode={isCinemaMode}
-        onToggleCinemaMode={toggleCinemaMode}
-        onOpenTrailer={() => setIsTrailerOpen(true)}
-        onOpenChatbot={() => setIsChatbotOpen(true)}
+        <div id="memoria-viva">
+          <CinematicTransitions />
+        </div>
+
+        <div id="identidad-corporativa">
+          <IdentitySection />
+        </div>
+
+        <div id="leyenda-originaria">
+          <NustaScrollTelling />
+        </div>
+
+        <div id="ecoaldea-modulos">
+          <EcoaldeaModules 
+            onSelectModuleForExperience={(module) => setSelectedExperienceModule(module)} 
+            onOpenTrailer={() => setIsTrailerOpen(true)} 
+          />
+        </div>
+
+        <div id="historia-impacto">
+          <ImpactStoryScroll />
+        </div>
+
+        <div id="recorrido-360">
+          <Suspense fallback={<div className="h-[50vh] w-full flex items-center justify-center bg-sadhana-sand text-sadhana-dark">Cargando Recorrido 360°...</div>}>
+            <VirtualTour360 onOpenProject={(fac) => {
+              setSelectedSanctuaryFacility(fac);
+              setCurrentPage('project-landing');
+            }} />
+          </Suspense>
+        </div>
+
+        <div id="testimonios">
+          <SocialProofSection />
+        </div>
+
+        <div id="guardianes">
+          <SpiritualLeaders />
+        </div>
+
+        <div id="media-hub">
+          <MediaHub />
+        </div>
+
+        <div id="como-unirse">
+          <JoinUsSection />
+        </div>
+
+        <div id="donaciones">
+          <DonationBanner onNavigate={() => {
+            setCurrentPage('mecenazgo');
+            window.scrollTo(0, 0);
+          }} />
+        </div>
+        
+        <FaqSection />
+
+        <LocationSection />
+
+      </div>
+
+      {/* 5. FOOTER */}
+      <Footer
+        onSelectModule={(id) => setSelectedExperienceModule(ECOALDEA_MODULES.find(m => m.id === id) || null)}
         onOpenSecurityModal={handleOpenSecurityModal}
       />
 
-      {/* ------------------------------------------------------------- */}
-      {/* 1. INICIO: VIDEO DEL ORIGEN DE PAMPA ÑUSTA CON SONIDOS DE      */}
-      {/*    NATURALEZA ACTIVADOS AUTOMÁTICAMENTE & LOS 5 MÓDULOS        */}
-      {/* ------------------------------------------------------------- */}
-      <div className="scene">
-        <Hero
-          themeMode={themeMode}
-          onExploreClick={() => scrollToSection('ecoaldea-modulos')}
-          onOpenTrailer={() => setIsTrailerOpen(true)}
-          onSelectModule={handleSelectModuleById}
-          onOpenSecurityModal={handleOpenSecurityModal}
-          onOpenChatbot={() => setIsChatbotOpen(true)}
-          onScrollToVideoShowcase={() => scrollToSection('video-referencial')}
-        />
-      </div>
-
-      {/* ------------------------------------------------------------- */}
-      {/* VIDEO REFERENCIAL OFICIAL 4K                                  */}
-      {/* ------------------------------------------------------------- */}
-      <div id="video-referencial" className="scene relative z-10 scroll-mt-20">
-        <ReferentialVideoShowcase
-          onOpenSecurityModal={handleOpenSecurityModal}
-          onOpenChatbot={() => setIsChatbotOpen(true)}
-          onExploreModules={() => scrollToSection('ecoaldea-modulos')}
-        />
-      </div>
-
-      {/* ------------------------------------------------------------- */}
-      {/* 2. SHOWREEL INTERACTIVO & EXPLORADOR VISUAL (DILLINGER / 10/10) */}
-      {/* ------------------------------------------------------------- */}
-      <div id="showreel" className="scene">
-        {activeExperienceView === 'dillinger' ? (
-          <DillingerContentSelector
-            externalIndex={selectedSlideIndex}
-            onSelectForShowreel={(index) => {
-              setSelectedSlideIndex(index);
-              setActiveExperienceView('reel');
-            }}
-            onOpenTrailerModal={() => setIsTrailerOpen(true)}
-            onOpenExperienceModal={handleOpenExperienceFromShowreelItem}
-          />
-        ) : (
-          <TenOutOfTenShowreel
-            externalSlideIndex={selectedSlideIndex}
-            onOpenTrailerModal={() => setIsTrailerOpen(true)}
-            onOpenDillingerSelector={() => setActiveExperienceView('dillinger')}
-            onExploreFullDocumentary={() => {
-              setActiveExperienceView('full');
-              scrollToSection('botanica-sagrada');
-            }}
-          />
-        )}
-      </div>
-
-      {/* ------------------------------------------------------------- */}
-      {/* 3. MÓDULOS DE EXPERIENCIA E INSTALACIONES (OPTIMIZADO MÓVIL)  */}
-      {/* ------------------------------------------------------------- */}
-      
-      {/* Botanical Sanctuary: Sacred Wachuma Genetic Bank & Seed Sanctuary */}
-      <div id="botanica-sagrada" className="scene">
-        <WachumaBotanicalSection
-          onOpenModal={() => handleSelectModuleById('wachuma')}
-        />
-      </div>
-
-      {/* 360° Virtual Tour & Astronomical Hotspots */}
-      <div className="scene">
-        <Suspense fallback={<div className="h-[500px] w-full flex items-center justify-center bg-sadhana-sand text-sadhana-dark">Cargando Recorrido 360°...</div>}>
-          <VirtualTour360 />
-        </Suspense>
-      </div>
-
-      {/* Cinematic Storyboard: La Leyenda en 4 Actos & Motor de Petrificación */}
-      <div className="scene">
-        <NustaScrollTelling />
-      </div>
-
-      {/* The Sacred River Willakamayu / Milky Way Timeline */}
-      <div className="scene">
-        <RiverTimeline />
-      </div>
-
-      {/* Critics & Documentary Film Facade 4K */}
-      <div className="scene">
-        <SocialProofSection />
-      </div>
-
-      {/* ------------------------------------------------------------- */}
-      {/* CÓMO LLEGAR: Ubicación, Rutas y Botón "Ver el Lugar"          */}
-      {/* ------------------------------------------------------------- */}
-      <div id="como-llegar" className="scene">
-        <LocationSection onOpenJourney={() => setIsJourneyOpen(true)} />
-      </div>
-
-      {/* Financial Reciprocity: Ayni, Padrinazgo & Pases para la Ecoaldea */}
-      <div id="donaciones" className="scene">
-        <DonationSystem />
-      </div>
-
-      {/* Footer */}
-      <div className="scene">
-        <Footer
-          onSelectModule={handleSelectModuleById}
-          onOpenSecurityModal={handleOpenSecurityModal}
-        />
-      </div>
-
-      {/* Full Cinematic 4K Documentary Trailer Modal */}
+      {/* 6. MODALS & OVERLAYS */}
       <Suspense fallback={null}>
         <CinematicTrailerModal
           isOpen={isTrailerOpen}
@@ -294,7 +261,6 @@ export default function App() {
         />
       </Suspense>
 
-      {/* Module In-Depth Experience Drawer Modal */}
       {selectedExperienceModule && (
         <ModuleExperienceModal
           module={selectedExperienceModule}
@@ -302,30 +268,22 @@ export default function App() {
         />
       )}
 
-      {/* Mobile Cinematic Navigation Dock (iOS/Android PWA experience) */}
       <MobileCinematicDock
         onOpenTrailer={() => setIsTrailerOpen(true)}
         onOpenDonate={() => scrollToSection('donaciones')}
         onScrollToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        onOpenChatbot={() => setIsChatbotOpen(true)}
+        onOpenChatbot={() => {
+          setIsChatbotOpen(false);
+          setTimeout(() => setIsChatbotOpen(true), 10);
+        }}
         onOpenSecurityModal={handleOpenSecurityModal}
       />
 
-      {/* Chatbot de Reserva Conecta con Pampa Ñusta (Videollamada Programada 1 a 1) */}
       <ConectaPampaNustaChatbot
         isOpenExternal={isChatbotOpen}
         onCloseExternal={() => setIsChatbotOpen(false)}
       />
 
-      {/* Viaje Interdimensional: Túnel Cuántico 3D + Street View de Llegada */}
-      <Suspense fallback={null}>
-        <InterdimensionalJourney
-          isOpen={isJourneyOpen}
-          onClose={() => setIsJourneyOpen(false)}
-        />
-      </Suspense>
-
-      {/* Modal de Auditoría de Seguridad SSL, Pagos y Protocolos de Ecoturismo */}
       <SecurityComplianceModal
         isOpen={isSecurityModalOpen}
         onClose={() => setIsSecurityModalOpen(false)}
@@ -334,3 +292,4 @@ export default function App() {
     </div>
   );
 }
+

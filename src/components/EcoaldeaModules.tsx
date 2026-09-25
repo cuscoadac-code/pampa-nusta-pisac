@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
-import { Sparkles, Calendar, Users, MapPin, ArrowRight, Play, Compass, ShieldCheck, Leaf } from 'lucide-react';
-import { ECOALDEA_MODULES } from '../data/ecoaldeaModules';
+import { useTranslation } from 'react-i18next';
+import { Sparkles, Compass, ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { useEcoaldeaModules } from '../data/ecoaldeaModules';
 import { EcoaldeaModule } from '../types';
 
 interface EcoaldeaModulesProps {
@@ -12,186 +14,197 @@ export const EcoaldeaModules: React.FC<EcoaldeaModulesProps> = ({
   onSelectModuleForExperience,
   onOpenTrailer,
 }) => {
-  const [activeModuleId, setActiveModuleId] = useState<string>('wachuma');
+  const { t } = useTranslation();
+  const ECOALDEA_MODULES = useEcoaldeaModules();
+  const MAIN_MODULES = ECOALDEA_MODULES.filter(m => !m.id.match(/^wachuma-\d+$/));
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [direction, setDirection] = useState(1);
 
-  const activeModule = ECOALDEA_MODULES.find((m) => m.id === activeModuleId) || ECOALDEA_MODULES[0];
+  const handleNext = () => {
+    setDirection(1);
+    setActiveIndex((prev) => (prev + 1) % MAIN_MODULES.length);
+  };
+
+  const handlePrev = () => {
+    setDirection(-1);
+    setActiveIndex((prev) => (prev - 1 + MAIN_MODULES.length) % MAIN_MODULES.length);
+  };
+
+  const handleSelect = (index: number) => {
+    setDirection(index > activeIndex ? 1 : -1);
+    setActiveIndex(index);
+  };
+
+  const currentModule = MAIN_MODULES[activeIndex];
+
+  const pageVariants = {
+    initial: (dir: number) => ({
+      rotateY: dir > 0 ? 90 : -90,
+      opacity: 0,
+      transformOrigin: dir > 0 ? 'right center' : 'left center',
+      scale: 0.95
+    }),
+    animate: {
+      rotateY: 0,
+      opacity: 1,
+      transformOrigin: 'center center',
+      scale: 1,
+      transition: {
+        duration: 0.8,
+        ease: [0.16, 1, 0.3, 1]
+      }
+    },
+    exit: (dir: number) => ({
+      rotateY: dir > 0 ? -90 : 90,
+      opacity: 0,
+      transformOrigin: dir > 0 ? 'left center' : 'right center',
+      scale: 0.95,
+      transition: {
+        duration: 0.8,
+        ease: [0.16, 1, 0.3, 1]
+      }
+    })
+  };
 
   return (
-    <section id="ecoaldea-modulos" className="relative py-20 sm:py-28 bg-[#14100c] text-[#f5eee6] overflow-hidden">
-      {/* Background cinematic glow & grain */}
-      <div className="absolute inset-0 bg-grain pointer-events-none opacity-40" />
-      <div className="absolute -top-40 -left-40 w-96 h-96 bg-[#8a4a25]/15 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute -bottom-40 -right-40 w-96 h-96 bg-[#506842]/15 rounded-full blur-[120px] pointer-events-none" />
+    <section className="relative bg-sadhana-dark text-white overflow-hidden min-h-screen flex flex-col justify-center py-20" style={{ perspective: '2000px' }}>
+      
+      {/* Intro Overlay / Título fijo superior */}
+      <div className="absolute top-6 md:top-8 left-0 w-full z-30 px-6 md:px-12 flex flex-col md:flex-row md:justify-between items-start md:items-center gap-4">
+        <div>
+          <h2 className="text-2xl md:text-4xl font-black tracking-tighter uppercase text-white drop-shadow-lg">
+            {t('modules.subtitle')}
+          </h2>
+          <span className="px-3 py-1 rounded-full bg-sadhana-primary/30 border border-sadhana-primary/50 text-[10px] md:text-xs font-mono tracking-widest text-white uppercase mt-2 inline-block backdrop-blur-md font-bold shadow-lg">
+            {t('modules.title')}
+          </span>
+        </div>
+        
+        <button
+          onClick={onOpenTrailer}
+          className="px-4 py-2.5 md:px-6 md:py-3 rounded-xl bg-sadhana-dark/80 backdrop-blur-xl hover:bg-white border border-sadhana-sand/30 text-white hover:text-sadhana-dark font-sans text-[10px] md:text-xs tracking-widest font-bold uppercase flex items-center gap-2 md:gap-3 transition-all hover:scale-[1.02] shadow-2xl"
+        >
+          <Compass className="w-4 h-4 md:w-5 md:h-5" />
+          <span>{t('modules.explore_btn')}</span>
+        </button>
+      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Movie Billing Header - Menos texto, alto impacto */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 border-b border-[#3b2c20] pb-8">
-          <div>
-            <div className="flex items-center gap-2 mb-2">
-              <span className="px-2.5 py-0.5 rounded-full bg-[#322318] border border-[#6b492d] text-[10px] font-mono tracking-widest text-[#e5aa5d] font-bold uppercase">
-                RESERVA NATURAL & CONSERVACIÓN · 5 PILARES
-              </span>
-              <span className="text-xs font-mono text-[#a89582] uppercase tracking-wider">
-                Pisac · Valle Sagrado
-              </span>
-            </div>
-            <h2 className="font-cinzel text-3xl sm:text-5xl font-bold tracking-wide text-[#fcf7f1] uppercase leading-none">
-              Cinco Capítulos Vivos
-            </h2>
-            <p className="text-xs sm:text-sm text-[#b8a695] font-mono tracking-wide mt-2 max-w-xl">
-              / ARQUITECTURA BIOCLIMÁTICA, AGROECOLOGÍA Y MEDICINA ANCESTRAL EN EL VALLE SAGRADO.
-            </p>
-          </div>
-
+      {/* Book Index (Top Pagination) */}
+      <div className="relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-6 mt-24 md:mt-32 flex flex-wrap justify-center gap-2 md:gap-4">
+        {MAIN_MODULES.map((mod, index) => (
           <button
-            onClick={onOpenTrailer}
-            className="self-start md:self-auto px-4 py-2.5 rounded-xl bg-[#221a13] hover:bg-[#2e2319] border border-[#6b492d] text-[#e5aa5d] font-mono text-xs tracking-wider uppercase flex items-center gap-2 transition-all hover:scale-[1.02] cursor-pointer"
+            key={mod.id}
+            onClick={() => handleSelect(index)}
+            className={`px-4 py-2 md:px-5 md:py-2.5 rounded-full text-[10px] md:text-xs font-mono font-bold uppercase tracking-widest transition-all ${
+              activeIndex === index 
+                ? 'bg-sadhana-primary text-black shadow-[0_0_15px_rgba(0,174,66,0.3)] scale-105' 
+                : 'bg-white/5 text-white/50 hover:bg-white/10 hover:text-white border border-white/5'
+            }`}
           >
-            <Compass className="w-4 h-4 text-[#d8974a]" />
-            <span>Explorar Santuario y Capítulos</span>
+            {mod.title}
           </button>
-        </div>
+        ))}
+      </div>
 
-        {/* 5-Chapter Navigation Bar (Horizontal Natural Sanctuary Bar) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-10">
-          {ECOALDEA_MODULES.map((mod, index) => {
-            const isActive = mod.id === activeModuleId;
-            return (
-              <button
-                key={mod.id}
-                onClick={() => setActiveModuleId(mod.id)}
-                className={`relative p-3.5 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between group overflow-hidden cursor-pointer ${
-                  isActive
-                    ? 'border-[#c2853f] bg-[#291e16] shadow-lg shadow-[#c2853f]/15 scale-[1.02]'
-                    : 'border-[#3b2c20] bg-[#1a140f]/90 hover:bg-[#251d16] hover:border-[#523d2b]'
-                }`}
-              >
-                {/* Active Indicator bar */}
-                {isActive && (
-                  <div className="absolute top-0 left-0 right-0 h-1 bg-[#c2853f]" />
-                )}
-
-                <div>
-                  <div className="flex items-center justify-between text-[10px] font-mono mb-1.5">
-                    <span className={isActive ? 'text-[#e5aa5d] font-bold' : 'text-[#8c7764]'}>
-                      0{index + 1}
-                    </span>
-                    <span className="text-[#a89582] text-[9px] uppercase tracking-wider">
-                      {mod.element}
-                    </span>
-                  </div>
-
-                  <h3 className={`font-cinzel text-xs sm:text-sm font-bold leading-snug transition-colors line-clamp-2 ${
-                    isActive ? 'text-[#e5aa5d]' : 'text-[#d9cbba] group-hover:text-[#f5eee6]'
-                  }`}>
-                    {mod.title}
-                  </h3>
-                </div>
-
-                <p className="text-[10px] text-[#8c7764] font-mono mt-2 truncate">
-                  {mod.altitude}
-                </p>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Active Module Showcase - Natural Sanctuary Showcase Card with Live Interaction */}
-        <div className="bg-[#1a140e]/90 border border-[#443224] rounded-3xl overflow-hidden shadow-2xl backdrop-blur-md">
-          <div className="grid grid-cols-1 lg:grid-cols-12">
-            {/* Left: Sanctuary Image with Letterbox feel (7 cols) */}
-            <div className="lg:col-span-7 relative min-h-[380px] sm:min-h-[460px] overflow-hidden group">
-              <img
-                src={activeModule.imageUrl}
-                alt={activeModule.title}
-                className="w-full h-full object-cover filter brightness-90 contrast-110 group-hover:scale-105 transition-transform duration-1000"
+      {/* Book Container */}
+      <div className="relative w-full max-w-7xl mx-auto px-4 sm:px-6 mt-12 md:mt-16 mb-24">
+        <AnimatePresence initial={false} custom={direction} mode="wait">
+          <motion.div
+            key={activeIndex}
+            custom={direction}
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            className="relative w-full rounded-[2rem] overflow-hidden border border-white/10 shadow-2xl"
+          >
+            {/* Imagen panorámica de fondo */}
+            <div className="absolute inset-0">
+              <img 
+                src={currentModule.imageUrl} 
+                alt={currentModule.title}
+                className="w-full h-full object-cover object-center animate-ken-burns"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#14100c] via-[#14100c]/30 to-transparent lg:bg-gradient-to-r lg:from-transparent lg:to-[#14100c]" />
-              <div className="absolute inset-0 cinema-vignette pointer-events-none" />
-
-              {/* Badges on Image */}
-              <div className="absolute top-6 left-6 z-10 flex flex-wrap items-center gap-2">
-                <span className="px-3 py-1 rounded-full bg-[#14100c]/80 backdrop-blur-md border border-[#8a5d35]/60 text-[10px] font-mono tracking-widest text-[#e5aa5d] uppercase font-bold">
-                  {activeModule.badge}
-                </span>
-                <span className="px-2.5 py-1 rounded-full bg-[#14100c]/70 backdrop-blur-md border border-[#433123] text-[10px] font-mono text-[#a89582]">
-                  {activeModule.altitude}
-                </span>
-              </div>
-
-              {/* Floating Quote */}
-              <div className="absolute bottom-6 left-6 right-6 z-10">
-                <p className="font-cinzel text-xs sm:text-sm italic text-[#f7e3c3] bg-[#14100c]/85 backdrop-blur-md p-3.5 rounded-2xl border border-[#6b492d]/40 max-w-lg">
-                  {activeModule.quote}
-                </p>
-              </div>
+              <div className="absolute inset-0 bg-gradient-to-r from-sadhana-dark via-sadhana-dark/70 to-transparent opacity-95 md:opacity-80" />
+              <div className="absolute inset-0 bg-black/20" />
             </div>
 
-            {/* Right: Crisp Metadata, Metrics & Actions (5 cols) */}
-            <div className="lg:col-span-5 p-6 sm:p-8 flex flex-col justify-between space-y-6">
-              <div>
-                <div className="flex items-center gap-2 text-[11px] font-mono text-[#e5aa5d] uppercase tracking-widest font-bold mb-1">
-                  <span>{activeModule.chapterNumber}</span>
-                  <span>·</span>
-                  <span className="text-[#a89582]">{activeModule.quechuaTitle}</span>
+            {/* Contenido (Glassmorphism) */}
+            <div className="relative z-10 w-full lg:max-w-2xl px-6 py-12 md:px-12 md:py-16 flex flex-col justify-center min-h-[70vh] md:min-h-[600px]">
+              <div className="bg-sadhana-dark/40 backdrop-blur-xl border border-white/10 p-6 md:p-8 rounded-3xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] w-full">
+                <div className="flex items-center gap-2 text-[9px] md:text-xs font-mono text-sadhana-primary uppercase tracking-widest font-bold mb-3 md:mb-4 flex-wrap">
+                  <span className="bg-white/10 px-2 py-1 rounded">{currentModule.chapterNumber}</span>
+                  <span className="hidden sm:inline">·</span>
+                  <span className="text-white/90 truncate">{currentModule.quechuaTitle}</span>
                 </div>
 
-                <h3 className="font-cinzel text-2xl sm:text-3xl font-bold tracking-wide text-[#fcf7f1] mb-2">
-                  {activeModule.title}
+                <h3 className="font-sans text-2xl md:text-5xl font-black tracking-tighter text-white mb-2 md:mb-4 leading-tight drop-shadow-md">
+                  {currentModule.title}
                 </h3>
-
-                {/* Natural Reserve Logline */}
-                <p className="text-xs sm:text-sm text-[#dfd3c5] font-mono leading-relaxed mb-6">
-                  {activeModule.cinemaLogline}
+                
+                <p className="text-xs md:text-sm text-sadhana-sand/90 font-medium leading-relaxed mb-4 md:mb-6 italic border-l-2 border-sadhana-primary/50 pl-3">
+                  "{currentModule.cinemaLogline}"
                 </p>
 
                 {/* Metrics Grid */}
-                <div className="grid grid-cols-2 gap-2.5 mb-6">
-                  {activeModule.metrics.map((metric, i) => (
-                    <div
-                      key={i}
-                      className="p-2.5 rounded-xl bg-[#201811] border border-[#3b2c20] text-left"
-                    >
-                      <span className="block text-[10px] font-mono text-[#8c7764] uppercase tracking-wider">
+                <div className="grid grid-cols-2 gap-2 md:gap-4 mb-4 md:mb-6">
+                  {currentModule.metrics.map((metric, i) => (
+                    <div key={i} className="p-2 md:p-3 rounded-xl bg-black/30 border border-white/5 text-left backdrop-blur-sm">
+                      <span className="block text-[8px] md:text-[10px] font-mono text-sadhana-sand/60 uppercase tracking-wider">
                         {metric.label}
                       </span>
-                      <span className="block text-xs font-mono font-bold text-[#f5eee6] mt-0.5">
+                      <span className="block text-[11px] md:text-sm font-mono font-bold text-white mt-1">
                         {metric.value}
                       </span>
                     </div>
                   ))}
                 </div>
 
-                {/* Key Highlights Bulleted */}
-                <div className="space-y-2 mb-6">
-                  {activeModule.keyHighlights.slice(0, 3).map((item, idx) => (
-                    <div key={idx} className="flex items-start gap-2 text-xs text-[#d9cbba]">
-                      <Sparkles className="w-3.5 h-3.5 text-[#d8974a] shrink-0 mt-0.5" />
+                {/* Key Highlights */}
+                <div className="space-y-2 md:space-y-3 mb-6 hidden sm:block">
+                  {currentModule.keyHighlights.slice(0, 3).map((item, idx) => (
+                    <div key={idx} className="flex items-start gap-3 text-[11px] md:text-sm font-medium text-white/80 leading-snug">
+                      <Sparkles className="w-4 h-4 text-sadhana-primary shrink-0 mt-0.5" />
                       <span>{item}</span>
                     </div>
                   ))}
                 </div>
-              </div>
 
-              {/* Actions */}
-              <div className="space-y-3 pt-4 border-t border-[#3b2c20]">
-                <button
-                  onClick={() => onSelectModuleForExperience(activeModule)}
-                  className="w-full py-3.5 px-6 rounded-2xl bg-[#c2853f] hover:bg-[#d8974a] text-[#14100c] font-cinzel font-bold text-xs tracking-wider uppercase flex items-center justify-center gap-2 shadow-xl shadow-[#c2853f]/20 hover:scale-[1.01] transition-all cursor-pointer"
-                >
-                  <span>{activeModule.ctaText}</span>
-                  <ArrowRight className="w-4 h-4 text-[#14100c]" />
-                </button>
+                {/* Actions */}
+                <div className="space-y-4 pt-4 md:pt-6 border-t border-white/10">
+                  <button
+                    onClick={() => onSelectModuleForExperience(currentModule)}
+                    className="w-full py-3 md:py-4 px-6 rounded-xl bg-white hover:bg-sadhana-primary text-sadhana-dark hover:text-white font-sans font-black text-xs md:text-sm tracking-widest uppercase flex items-center justify-center gap-3 transition-all cursor-pointer shadow-lg"
+                  >
+                    <span>{currentModule.ctaText}</span>
+                    <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
+                  </button>
 
-                <div className="flex items-center justify-between text-[10px] font-mono text-[#8c7764] px-2">
-                  <span>Capacidad: {activeModule.capacity}</span>
-                  <span>Permanencia: {activeModule.duration}</span>
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-2 text-[9px] md:text-[10px] font-mono font-bold text-white/50 px-2 uppercase tracking-wider text-center sm:text-left">
+                    <span>Capacidad: {currentModule.capacity}</span>
+                    <span>{currentModule.duration}</span>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </AnimatePresence>
+        
+        {/* Navigation Arrows (Side) */}
+        <button 
+          onClick={handlePrev}
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-6 z-20 w-10 h-10 md:w-12 md:h-12 bg-black/40 backdrop-blur-md rounded-full border border-white/10 flex items-center justify-center text-white hover:bg-sadhana-primary hover:text-black hover:scale-110 transition-all shadow-xl"
+        >
+          <ChevronLeft className="w-5 h-5 md:w-6 md:h-6 pr-0.5" />
+        </button>
+        <button 
+          onClick={handleNext}
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-6 z-20 w-10 h-10 md:w-12 md:h-12 bg-black/40 backdrop-blur-md rounded-full border border-white/10 flex items-center justify-center text-white hover:bg-sadhana-primary hover:text-black hover:scale-110 transition-all shadow-xl"
+        >
+          <ChevronRight className="w-5 h-5 md:w-6 md:h-6 pl-0.5" />
+        </button>
       </div>
+
     </section>
   );
 };

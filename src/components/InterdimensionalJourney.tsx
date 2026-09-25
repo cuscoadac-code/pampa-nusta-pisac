@@ -1,373 +1,584 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import * as THREE from 'three';
-import { X, MapPin, Compass, ChevronLeft, ChevronRight, Radio, Eye, Navigation } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { X, ChevronDown, ChevronLeft, ChevronRight, MapPin, Navigation } from 'lucide-react';
 
 interface InterdimensionalJourneyProps {
-  isOpen: boolean;
   onClose: () => void;
 }
 
-// --------------------------------------------------------
-// 3D TUNNEL COMPONENT
-// --------------------------------------------------------
-const Tunnel: React.FC<{ progressRef: React.MutableRefObject<number> }> = ({ progressRef }) => {
-  const { camera, scene } = useThree();
-  const tubeRef = useRef<THREE.Mesh>(null);
-  const particlesRef = useRef<THREE.Points>(null);
-
-  // Create curve
-  const curve = useMemo(() => {
-    const points: THREE.Vector3[] = [];
-    for (let i = 0; i <= 100; i++) {
-      const t = i / 100;
-      const x = Math.sin(t * Math.PI * 4) * 3;
-      const y = Math.cos(t * Math.PI * 4) * 3;
-      const z = -t * 100;
-      points.push(new THREE.Vector3(x, y, z));
-    }
-    return new THREE.CatmullRomCurve3(points);
-  }, []);
-
-  // Create particles
-  const [particleGeo, particleMat] = useMemo(() => {
-    const particleCount = 2500;
-    const positions = new Float32Array(particleCount * 3);
-    const colors = new Float32Array(particleCount * 3);
-    const colorChoices = [
-      new THREE.Color('#00ae42'), // emerald
-      new THREE.Color('#13612e'), // dark emerald
-      new THREE.Color('#e8dcc4'), // sand/gold
-      new THREE.Color('#ffffff'), // white
-    ];
-
-    for (let i = 0; i < particleCount; i++) {
-      const t = Math.random();
-      const pointOnCurve = curve.getPointAt(t);
-      
-      // Random offset from curve
-      const angle = Math.random() * Math.PI * 2;
-      const radius = 1.5 + Math.random() * 4;
-      
-      positions[i * 3] = pointOnCurve.x + Math.cos(angle) * radius;
-      positions[i * 3 + 1] = pointOnCurve.y + Math.sin(angle) * radius;
-      positions[i * 3 + 2] = pointOnCurve.z + (Math.random() - 0.5) * 5;
-
-      const color = colorChoices[Math.floor(Math.random() * colorChoices.length)];
-      colors[i * 3] = color.r;
-      colors[i * 3 + 1] = color.g;
-      colors[i * 3 + 2] = color.b;
-    }
-
-    const geo = new THREE.BufferGeometry();
-    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geo.setAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-    const mat = new THREE.PointsMaterial({
-      size: 0.05,
-      vertexColors: true,
-      transparent: true,
-      opacity: 0.8,
-      sizeAttenuation: true,
-    });
-
-    return [geo, mat];
-  }, [curve]);
-
-  useFrame((state, delta) => {
-    const progress = Math.min(Math.max(progressRef.current, 0), 1);
+// ─── GLSL SHADERS ──────────────────────────────────────────────────────────
+const VERT = `
+  attribute vec4 a_pos;
+  attribute vec2 a_uv;
+  varying vec2 v_uv;
+  void main(){ gl_Position=a_pos; v_uv=a_uv; }
+`;
+const FRAG = `
+  precision highp float;
+  varying vec2 v_uv;
+  uniform float u_t;
+  uniform float u_p;
+  uniform vec2  u_res;
+  #define PI 3.14159265359
+  float hash(vec2 p){ p=fract(p*vec2(234.34,435.345)); p+=dot(p,p+34.23); return fract(p.x*p.y); }
+  float noise(vec2 p){
+    vec2 i=floor(p),f=fract(p); f=f*f*(3.0-2.0*f);
+    return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),f.x),f.y);
+  }
+  float fbm(vec2 p){ float v=0.0,a=0.5; for(int i=0;i<6;i++){ v+=a*noise(p); a*=0.5; p*=2.0; } return v; }
+  float stars(vec2 uv){ vec2 c=floor(uv*150.0); float s=hash(c+vec2(42,13)); vec2 pos=fract(uv*150.0)-0.5; float tw=0.5+0.5*sin(u_t*2.0+s*100.0); return s>0.97?(1.0-length(pos)*8.0)*tw:0.0; }
+  void main(){
+    vec2 uv=v_uv; float prog=clamp(u_p,0.0,1.0);
+    vec2 c=uv-0.5; float ang=atan(c.y,c.x); float rad=length(c);
     
-    // Position camera along curve
-    const t = Math.min(progress, 0.999);
-    const pos = curve.getPointAt(t);
-    const lookAtPos = curve.getPointAt(Math.min(t + 0.01, 1));
+    // Mandala fold
+    float sides = 12.0; // Mandala petals
+    float a = mod(ang, 2.0*PI/sides) - PI/sides;
+    vec2 kc = rad * vec2(cos(a), sin(a));
     
-    camera.position.copy(pos);
-    camera.lookAt(lookAtPos);
+    float speed=0.3+prog*6.0; float tz=u_t*speed;
+    float sp=atan(kc.y,kc.x)/(2.0*PI)+tz*0.04; float td=1.0/(rad+0.01)*0.3+tz;
+    vec2 tuv=vec2(sp,td);
     
-    // Add subtle camera shake based on speed (progress)
-    camera.position.x += (Math.random() - 0.5) * progress * 0.1;
-    camera.position.y += (Math.random() - 0.5) * progress * 0.1;
+    // Vibrant colors for interdimensional trip
+    vec3 col1=vec3(0.0,0.8,0.5),col2=vec3(0.9,0.1,0.6),col3=vec3(0.2,0.4,1.0),col4=vec3(1.0,0.8,0.1);
+    float n1=fbm(tuv*2.0+vec2(u_t*0.05,0.0)),n2=fbm(tuv*3.0-vec2(u_t*0.08,u_t*0.03)),n3=fbm(kc*5.0+vec2(u_t*0.1));
+    vec3 neb=mix(col4,col1,n1); neb=mix(neb,col2,n2*0.8); neb=mix(neb,col3,pow(n3,2.0)*0.6);
+    
+    float core=pow(1.0-smoothstep(0.0,0.15,rad),2.0)*(0.3+prog*1.5);
+    float rim=(smoothstep(0.45,0.5,rad)*(1.0-smoothstep(0.5,0.55,rad))+smoothstep(0.3,0.35,rad)*(1.0-smoothstep(0.35,0.4,rad)))*0.5*(0.5+0.5*sin(ang*sides+u_t*4.0));
+    float ring=smoothstep(0.05,0.1,fract(td*0.5))*(1.0-smoothstep(0.1,0.15,fract(td*0.5)))*(1.0-smoothstep(0.0,0.5,rad))*(0.5+0.5*sin(ang*24.0+u_t*2.0));
+    
+    vec3 final=neb;
+    final=mix(final,mix(vec3(1),vec3(1,0.5,0.8),core),core);
+    final+=vec3(0.4,1.0,0.7)*rim*1.5;
+    final+=col4*ring*(1.0+prog*2.0);
+    final+=vec3(1.0)*max(0.0,stars(uv))*(1.0-smoothstep(0.3,0.5,rad*2.0));
+    
+    float vig=max(0.0,1.0-smoothstep(0.3,0.7,rad*2.0)); final*=vig+0.1;
+    float wo=smoothstep(0.85,1.0,prog); final=mix(final,vec3(1,0.97,0.85),wo);
+    
+    final=final/(final+vec3(0.4)); final=pow(final,vec3(0.8));
+    gl_FragColor=vec4(final,1.0);
+  }
+`;
 
-    if (tubeRef.current) {
-      tubeRef.current.rotation.z += delta * 0.2; // Auto-rotate
-    }
-    
-    if (particlesRef.current) {
-      // Speed effect: elongate particles visually by scaling them based on progress?
-      // Since it's Points we can't scale non-uniformly easily without shaders.
-      // But we can rotate the particle system slightly.
-      particlesRef.current.rotation.z -= delta * 0.1;
-    }
-  });
+// ─── REAL SANCTUARY PHOTOS ─────────────────────────────────────────────────
+const SANCTUARY_SPOTS = [
+  {
+    id: 'area',
+    src: '/fotos-reales/pampa-area.jpg',
+    label: 'Área Central',
+    desc: 'Zona de trabajo comunitario y permacultura',
+    coords: '-13.407585, -71.836324',
+  },
+  {
+    id: 'casa',
+    src: '/fotos-reales/pampa-casa.jpg',
+    label: 'Casa Ecológica',
+    desc: 'Bioconstrucción en tierra y madera · Pisac, Cusco',
+    coords: '-13.407585, -71.836324',
+  },
+  {
+    id: 'tipis',
+    src: '/fotos-reales/pampa-tipis.jpg',
+    label: 'Tipis Ceremoniales',
+    desc: 'Espacios de retiro y ceremonia con vista a los Apus',
+    coords: '-13.407585, -71.836324',
+  },
+];
+
+const LABELS = [
+  { at: 0.00, text: 'Iniciando el Viaje Sagrado...', sub: 'Tu alma está despertando' },
+  { at: 0.25, text: 'Cruzando el Umbral Cósmico', sub: 'Mandalas de Luz te guían' },
+  { at: 0.50, text: 'Los Apus te llaman', sub: 'Sientes la fuerza de las montañas' },
+  { at: 0.75, text: 'Valle de los Espíritus · 3,347 msnm', sub: 'El Wachuma abre el portal' },
+  { at: 0.92, text: '¡Aterrizando en Pampa Ñusta!', sub: 'Ya estás aquí...' },
+];
+
+// ─── STREET VIEW 360° COMPONENT ────────────────────────────────────────────
+const StreetView: React.FC<{ onExplore: () => void }> = ({ onExplore }) => {
+  const [active, setActive] = useState(0);
+  const [dragging, setDragging] = useState(false);
+  const [panX, setPanX] = useState(0);
+  const [animIn, setAnimIn] = useState(true);
+  const startX = useRef(0);
+  const dragDelta = useRef(0);
+  const imgRef = useRef<HTMLDivElement>(null);
+
+  const spot = SANCTUARY_SPOTS[active];
+
+  const goTo = (idx: number) => {
+    setAnimIn(false);
+    setTimeout(() => {
+      setActive(idx);
+      setPanX(0);
+      setAnimIn(true);
+    }, 250);
+  };
+
+  const next = () => goTo((active + 1) % SANCTUARY_SPOTS.length);
+  const prev = () => goTo((active - 1 + SANCTUARY_SPOTS.length) % SANCTUARY_SPOTS.length);
+
+  // Drag / pan horizontally to simulate 360 look-around
+  const onPointerDown = (e: React.PointerEvent) => {
+    setDragging(true);
+    startX.current = e.clientX;
+    dragDelta.current = panX;
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  };
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!dragging) return;
+    const dx = e.clientX - startX.current;
+    setPanX(dragDelta.current + dx * 0.3); // slow drag = realistic pan
+  };
+  const onPointerUp = () => setDragging(false);
 
   return (
-    <>
-      <ambientLight intensity={0.5} />
-      <mesh ref={tubeRef}>
-        <tubeGeometry args={[curve, 200, 2, 16, false]} />
-        <meshBasicMaterial
-          color="#00ae42"
-          wireframe={true}
-          transparent={true}
-          opacity={0.15}
-        />
-      </mesh>
-      <points ref={particlesRef} geometry={particleGeo} material={particleMat} />
-    </>
+    <div style={{
+      position: 'absolute', inset: 0, zIndex: 20,
+      display: 'flex', flexDirection: 'column',
+      background: '#111',
+      animation: 'fadeInStreet 0.7s ease-out forwards',
+    }}>
+
+      {/* ── GOOGLE STREET VIEW TOP BAR ── */}
+      <div style={{
+        position: 'absolute', top: 0, left: 0, right: 0, zIndex: 30,
+        background: 'linear-gradient(to bottom, rgba(0,0,0,0.75), transparent)',
+        padding: '14px 16px 32px',
+        display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between',
+      }}>
+        {/* Location info */}
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+            <div style={{
+              width: 7, height: 7, borderRadius: '50%',
+              background: '#4ade80', boxShadow: '0 0 8px #4ade80',
+              animation: 'pulse 1.5s ease-in-out infinite',
+            }} />
+            <span style={{ color: '#4ade80', fontSize: 9, fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', fontFamily: "'Inter', sans-serif" }}>
+              EN VIVO · Pampa Ñusta
+            </span>
+          </div>
+          <h3 style={{ color: '#fff', fontSize: 'clamp(15px, 4vw, 22px)', fontWeight: 800, margin: 0, fontFamily: "'Inter', sans-serif" }}>
+            📍 {spot.label}
+          </h3>
+          <p style={{ color: 'rgba(255,255,255,0.65)', fontSize: 11, margin: '3px 0 0', fontFamily: "'Inter', sans-serif" }}>
+            {spot.desc}
+          </p>
+        </div>
+
+        {/* Coords badge */}
+        <div style={{
+          background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(74,222,128,0.3)',
+          borderRadius: 8, padding: '5px 10px', backdropFilter: 'blur(8px)',
+          textAlign: 'right',
+        }}>
+          <div style={{ color: '#4ade80', fontSize: 8, fontWeight: 700, letterSpacing: '0.1em', fontFamily: 'monospace' }}>COORDENADAS</div>
+          <div style={{ color: '#fff', fontSize: 10, fontFamily: 'monospace', marginTop: 2 }}>{spot.coords}</div>
+        </div>
+      </div>
+
+      {/* ── PANORAMIC IMAGE VIEWER ── */}
+      <div
+        ref={imgRef}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        style={{
+          flex: 1, overflow: 'hidden', cursor: dragging ? 'grabbing' : 'grab',
+          position: 'relative',
+        }}
+      >
+        <div style={{
+          width: '160%',
+          height: '100%',
+          backgroundImage: `url(${spot.src})`,
+          backgroundSize: 'cover',
+          backgroundPosition: `${50 - panX * 0.05}% center`,
+          transform: `translateX(${Math.max(-25, Math.min(25, -panX * 0.12))}%) scale(${animIn ? 1 : 1.05})`,
+          transition: animIn
+            ? 'transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94), opacity 0.25s'
+            : 'transform 0.25s, opacity 0.25s',
+          opacity: animIn ? 1 : 0,
+          filter: `brightness(${dragging ? 0.95 : 1})`,
+          willChange: 'transform',
+          userSelect: 'none',
+        }} />
+
+        {/* Pan hint */}
+        {!dragging && (
+          <div style={{
+            position: 'absolute', top: '50%', left: '50%',
+            transform: 'translate(-50%, -50%)',
+            color: 'rgba(255,255,255,0.35)', fontSize: 11,
+            fontFamily: "'Inter', sans-serif", pointerEvents: 'none',
+            display: 'flex', alignItems: 'center', gap: 4,
+            animation: 'fadeInOut 3s ease-in-out infinite',
+          }}>
+            ← Arrastra para mirar en 360° →
+          </div>
+        )}
+
+        {/* Vignette */}
+        <div style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          background: 'radial-gradient(ellipse at center, transparent 50%, rgba(0,0,0,0.5) 100%)',
+        }} />
+      </div>
+
+      {/* ── BOTTOM CONTROL BAR ── */}
+      <div style={{
+        background: 'linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.6))',
+        padding: '12px 16px 20px',
+        display: 'flex', flexDirection: 'column', gap: 12,
+      }}>
+        {/* Thumbnail nav row */}
+        <div style={{ display: 'flex', gap: 8, justifyContent: 'center' }}>
+          {SANCTUARY_SPOTS.map((s, i) => (
+            <button
+              key={s.id}
+              onClick={() => goTo(i)}
+              style={{
+                width: 52, height: 36, borderRadius: 6, overflow: 'hidden',
+                border: i === active ? '2px solid #4ade80' : '2px solid transparent',
+                padding: 0, cursor: 'pointer',
+                boxShadow: i === active ? '0 0 10px rgba(74,222,128,0.6)' : 'none',
+                transition: 'all 0.2s', flexShrink: 0,
+              }}
+            >
+              <img src={s.src} alt={s.label} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            </button>
+          ))}
+        </div>
+
+        {/* Nav arrows + spot label + Explore button */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <button
+            onClick={prev}
+            style={{
+              width: 36, height: 36, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.2)',
+              background: 'rgba(255,255,255,0.1)', color: '#fff', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+            }}
+          >
+            <ChevronLeft size={16} />
+          </button>
+
+          <div style={{ flex: 1, textAlign: 'center' }}>
+            <div style={{ color: '#fff', fontSize: 12, fontWeight: 700, fontFamily: "'Inter', sans-serif" }}>{spot.label}</div>
+            <div style={{ color: 'rgba(255,255,255,0.45)', fontSize: 10, fontFamily: "'Inter', sans-serif" }}>
+              {active + 1} / {SANCTUARY_SPOTS.length}
+            </div>
+          </div>
+
+          <button
+            onClick={next}
+            style={{
+              width: 36, height: 36, borderRadius: '50%', border: '1px solid rgba(255,255,255,0.2)',
+              background: 'rgba(255,255,255,0.1)', color: '#fff', cursor: 'pointer',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+            }}
+          >
+            <ChevronRight size={16} />
+          </button>
+        </div>
+
+        {/* Explore button */}
+        <button
+          onClick={() => {
+            onExplore();
+            setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 120);
+          }}
+          style={{
+            width: '100%',
+            background: 'linear-gradient(135deg, #16a34a, #15803d)',
+            color: '#fff', border: 'none', borderRadius: 12,
+            padding: '13px 24px', fontSize: 14, fontWeight: 700,
+            cursor: 'pointer', fontFamily: "'Inter', system-ui, sans-serif",
+            boxShadow: '0 4px 20px rgba(22,163,74,0.5)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
+            letterSpacing: '0.01em',
+          }}
+        >
+          <Navigation size={16} />
+          Explorar el Santuario Completo
+        </button>
+      </div>
+
+      <style>{`
+        @keyframes fadeInStreet {
+          from { opacity: 0; transform: scale(1.04); }
+          to   { opacity: 1; transform: scale(1); }
+        }
+        @keyframes pulse {
+          0%,100% { opacity: 1; transform: scale(1); }
+          50%      { opacity: 0.5; transform: scale(1.4); }
+        }
+        @keyframes fadeInOut {
+          0%,100% { opacity: 0; }
+          40%,60% { opacity: 1; }
+        }
+      `}</style>
+    </div>
   );
 };
 
-// --------------------------------------------------------
-// MAIN COMPONENT
-// --------------------------------------------------------
-export const InterdimensionalJourney: React.FC<InterdimensionalJourneyProps> = ({ isOpen, onClose }) => {
-  const [progressState, setProgressState] = useState(0);
+// ─── MAIN TUNNEL COMPONENT ─────────────────────────────────────────────────
+export const InterdimensionalJourney: React.FC<InterdimensionalJourneyProps> = ({ onClose }) => {
+  const canvasRef   = useRef<HTMLCanvasElement>(null);
+  const glRef       = useRef<WebGLRenderingContext | null>(null);
+  const progRef_gl  = useRef<WebGLProgram | null>(null);
+  const rafRef      = useRef<number>(0);
+  const t0Ref       = useRef<number>(Date.now());
+
+  const [progress, setProgress] = useState(0);
   const progressRef = useRef(0);
-  const containerRef = useRef<HTMLDivElement>(null);
-  
-  // Phase 3 state
-  const [currentViewIdx, setCurrentViewIdx] = useState(0);
-  const [isDragging, setIsDragging] = useState(false);
-  const [startX, setStartX] = useState(0);
-  const [dragOffset, setDragOffset] = useState(0);
-  const [currentDrag, setCurrentDrag] = useState(0);
 
-  const views = [
-    { name: 'Valle Sagrado Aéreo', image: '/images/journey/valley-aerial.jpg' },
-    { name: 'Santuario Ecológico', image: '/images/journey/sanctuary-panorama.jpg' },
-    { name: 'Terrazas Ancestrales', image: '/images/journey/terraces-mountains.jpg' }
-  ];
+  // Show street view when fully arrived
+  const [showStreetView, setShowStreetView] = useState(false);
 
-  const handleWheel = useCallback((e: WheelEvent) => {
-    e.preventDefault();
-    const delta = e.deltaY > 0 ? 0.005 : -0.005;
-    progressRef.current = Math.min(Math.max(progressRef.current + delta, 0), 1);
-    setProgressState(progressRef.current);
+  const arrived = progress >= 0.94;
+  const currentLabelIndex = LABELS.findIndex(l => progress < l.at) === -1 ? LABELS.length - 1 : Math.max(0, LABELS.findIndex(l => progress < l.at) - 1);
+  const label = LABELS[currentLabelIndex];
+  const nextLabel = LABELS[currentLabelIndex + 1] || { at: 1.0 };
+  const localProg = (progress - label.at) / (nextLabel.at - label.at || 1);
+  const textScale = 0.8 + localProg * 0.7;
+  const textOpacity = Math.sin(localProg * Math.PI); // parabola
+  const textBlur = Math.abs(localProg - 0.5) * 12; // 6px at start, 0px at middle, 6px at end
+  const speedKmH = Math.round(300 + progress * 28700);
+
+  // Trigger street view shortly after arrival
+  useEffect(() => {
+    if (arrived && !showStreetView) {
+      const t = setTimeout(() => setShowStreetView(true), 1200);
+      return () => clearTimeout(t);
+    }
+  }, [arrived, showStreetView]);
+
+  // ── WebGL boot ──────────────────────────────────────────────────────────
+  const initGL = useCallback(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const gl = canvas.getContext('webgl', { antialias: false, alpha: false });
+    if (!gl) return;
+    glRef.current = gl;
+    const mk = (type: number, src: string) => {
+      const s = gl.createShader(type)!;
+      gl.shaderSource(s, src); gl.compileShader(s); return s;
+    };
+    const prog = gl.createProgram()!;
+    gl.attachShader(prog, mk(gl.VERTEX_SHADER, VERT));
+    gl.attachShader(prog, mk(gl.FRAGMENT_SHADER, FRAG));
+    gl.linkProgram(prog); gl.useProgram(prog);
+    progRef_gl.current = prog;
+    const bind = (data: Float32Array, attr: string, size: number) => {
+      const buf = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW);
+      const loc = gl.getAttribLocation(prog, attr);
+      gl.enableVertexAttribArray(loc);
+      gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0);
+    };
+    bind(new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), 'a_pos', 2);
+    bind(new Float32Array([0,0, 1,0, 0,1, 1,1]), 'a_uv', 2);
   }, []);
 
-  const touchStartY = useRef(0);
-  const handleTouchStart = useCallback((e: TouchEvent) => {
-    touchStartY.current = e.touches[0].clientY;
+  const resize = useCallback(() => {
+    const c = canvasRef.current; const gl = glRef.current;
+    if (!c || !gl) return;
+    c.width = window.innerWidth; c.height = window.innerHeight;
+    gl.viewport(0, 0, c.width, c.height);
   }, []);
 
-  const handleTouchMove = useCallback((e: TouchEvent) => {
-    e.preventDefault();
-    const deltaY = touchStartY.current - e.touches[0].clientY;
-    const delta = deltaY * 0.0005; // sensitivity
-    progressRef.current = Math.min(Math.max(progressRef.current + delta, 0), 1);
-    setProgressState(progressRef.current);
-    touchStartY.current = e.touches[0].clientY;
+  const tick = useCallback(() => {
+    const gl = glRef.current; const prog = progRef_gl.current; const c = canvasRef.current;
+    if (!gl || !prog || !c) return;
+    const t = (Date.now() - t0Ref.current) / 1000;
+    gl.uniform1f(gl.getUniformLocation(prog, 'u_t'), t);
+    gl.uniform1f(gl.getUniformLocation(prog, 'u_p'), progressRef.current);
+    gl.uniform2f(gl.getUniformLocation(prog, 'u_res'), c.width, c.height);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    rafRef.current = requestAnimationFrame(tick);
+  }, []);
+
+  const advance = useCallback((delta: number) => {
+    const next = Math.min(1, Math.max(0, progressRef.current + delta));
+    progressRef.current = next;
+    setProgress(next);
   }, []);
 
   useEffect(() => {
-    if (isOpen && progressRef.current < 1) {
-      const container = containerRef.current;
-      if (container) {
-        container.addEventListener('wheel', handleWheel, { passive: false });
-        container.addEventListener('touchstart', handleTouchStart, { passive: false });
-        container.addEventListener('touchmove', handleTouchMove, { passive: false });
-      }
-      return () => {
-        if (container) {
-          container.removeEventListener('wheel', handleWheel);
-          container.removeEventListener('touchstart', handleTouchStart);
-          container.removeEventListener('touchmove', handleTouchMove);
-        }
-      };
-    }
-  }, [isOpen, handleWheel, handleTouchStart, handleTouchMove, progressState]);
+    initGL(); resize(); window.addEventListener('resize', resize);
+    tick();
+    document.body.style.overflow = 'hidden';
 
-  // Reset on open/close
-  useEffect(() => {
-    if (isOpen) {
-      progressRef.current = 0;
-      setProgressState(0);
-      setDragOffset(0);
-      setCurrentDrag(0);
-    }
-  }, [isOpen]);
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      advance(e.deltaY / (window.innerHeight * 3));
+    };
+    let touchY = 0;
+    const onTouchStart = (e: TouchEvent) => { touchY = e.touches[0].clientY; };
+    const onTouchMove = (e: TouchEvent) => {
+      e.preventDefault();
+      const dy = touchY - e.touches[0].clientY;
+      touchY = e.touches[0].clientY;
+      advance(dy / (window.innerHeight * 1.5));
+    };
 
-  // Street view dragging
-  const handlePanoramaMouseDown = (e: React.MouseEvent | React.TouchEvent) => {
-    setIsDragging(true);
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    setStartX(clientX);
-  };
+    window.addEventListener('wheel',      onWheel,      { passive: false });
+    window.addEventListener('touchstart', onTouchStart, { passive: true  });
+    window.addEventListener('touchmove',  onTouchMove,  { passive: false });
 
-  const handlePanoramaMouseMove = (e: React.MouseEvent | React.TouchEvent) => {
-    if (!isDragging) return;
-    const clientX = 'touches' in e ? e.touches[0].clientX : e.clientX;
-    const diff = clientX - startX;
-    setCurrentDrag(diff);
-  };
-
-  const handlePanoramaMouseUp = () => {
-    setIsDragging(false);
-    // limit drag
-    let newOffset = dragOffset + currentDrag;
-    const maxOffset = 500; // arbitrary max pan
-    const minOffset = -500;
-    newOffset = Math.max(minOffset, Math.min(maxOffset, newOffset));
-    setDragOffset(newOffset);
-    setCurrentDrag(0);
-  };
-
-  if (!isOpen) return null;
-
-  const p = progressState;
-  const isPhase1 = p < 0.85;
-  const isPhase2 = p >= 0.85 && p < 1;
-  const isPhase3 = p === 1;
-
-  const speedKph = Math.floor(300 + (29000 - 300) * (p / 0.85));
+    return () => {
+      window.removeEventListener('resize',     resize);
+      window.removeEventListener('wheel',      onWheel);
+      window.removeEventListener('touchstart', onTouchStart);
+      window.removeEventListener('touchmove',  onTouchMove);
+      cancelAnimationFrame(rafRef.current);
+      document.body.style.overflow = '';
+    };
+  }, [initGL, resize, tick, advance]);
 
   return (
-    <div 
-      ref={containerRef}
-      className="fixed inset-0 z-[9999] bg-black overflow-hidden flex items-center justify-center"
-    >
-      {/* ALWAYS VISIBLE CLOSE BUTTON */}
-      <button 
+    <div style={{ position: 'fixed', inset: 0, zIndex: 9999, overflow: 'hidden', touchAction: 'none', userSelect: 'none' }}>
+
+      {/* WebGL Canvas */}
+      <canvas ref={canvasRef} style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', display: 'block' }} />
+
+      {/* Progress bar */}
+      <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 3, background: 'rgba(255,255,255,0.08)', zIndex: 10 }}>
+        <div style={{
+          height: '100%', width: `${progress * 100}%`,
+          background: 'linear-gradient(90deg, #4ade80, #fbbf24)',
+          boxShadow: '0 0 12px #4ade80', transition: 'width 0.08s linear',
+        }} />
+      </div>
+
+      {/* Close */}
+      <button
         onClick={onClose}
-        className="absolute top-6 right-6 z-50 text-white/50 hover:text-white transition-colors p-2 bg-black/20 rounded-full backdrop-blur-sm"
+        style={{
+          position: 'absolute', top: 18, right: 18, zIndex: 40,
+          width: 40, height: 40, borderRadius: '50%',
+          background: 'rgba(0,0,0,0.45)', border: '1px solid rgba(255,255,255,0.18)',
+          color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          backdropFilter: 'blur(8px)',
+        }}
       >
-        <X size={24} />
+        <X size={16} />
       </button>
 
-      {/* PHASE 1 & 2: 3D CANVAS */}
-      {!isPhase3 && (
-        <div className="absolute inset-0 z-0">
-          <Canvas dpr={[1, 1.5]} gl={{ antialias: false }}>
-            <Tunnel progressRef={progressRef} />
-          </Canvas>
-          
-          {/* HUD OVERLAY (Phase 1) */}
-          <div className={`absolute inset-0 pointer-events-none transition-opacity duration-500 ${isPhase1 ? 'opacity-100' : 'opacity-0'}`}>
-            <div className="absolute top-6 left-6 font-mono text-[10px] tracking-widest text-[#00ae42] uppercase">
-              Viaje Interdimensional
-            </div>
-            
-            <div className="absolute top-6 right-20 font-mono text-[10px] tracking-widest text-[#e8dcc4] uppercase text-right">
-              Velocidad<br/>
-              <span className="text-[#00ae42]">{Math.min(speedKph, 29000).toLocaleString()} km/h</span>
-            </div>
-
-            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 w-64 h-[1px] bg-white/20">
-              <div 
-                className="h-full bg-[#00ae42] transition-all duration-75"
-                style={{ width: `${(p / 0.85) * 100}%` }}
-              />
-            </div>
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 font-mono text-[10px] tracking-widest text-white/50 uppercase">
-              Scroll para avanzar
-            </div>
-
-            <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-mono text-xs tracking-[0.2em] text-white/70 uppercase text-center transition-opacity duration-1000 ${p > 0.3 && p < 0.8 ? 'opacity-100' : 'opacity-0'}`}>
-              Cruzando dimensiones hacia<br/>el Valle Sagrado...
+      {/* HUD (hidden when street view is shown) */}
+      {!showStreetView && (
+        <>
+          <div style={{ position: 'absolute', top: 20, left: '50%', transform: 'translateX(-50%)', zIndex: 10, textAlign: 'center' }}>
+            <div style={{
+              background: 'rgba(0,0,0,0.4)', border: '1px solid rgba(74,222,128,0.35)',
+              borderRadius: 50, padding: '5px 16px', color: '#4ade80', fontSize: 10, fontWeight: 700,
+              letterSpacing: '0.2em', textTransform: 'uppercase', fontFamily: "'Inter', monospace",
+              backdropFilter: 'blur(8px)', whiteSpace: 'nowrap',
+            }}>
+              ⚡ {speedKmH.toLocaleString()} km/h · TÚNEL ANDINO
             </div>
           </div>
 
-          {/* FLASH TRANSITION (Phase 2) */}
-          <div className={`absolute inset-0 bg-white/90 flex flex-col items-center justify-center transition-opacity duration-1000 pointer-events-none ${isPhase2 ? 'opacity-100' : 'opacity-0'}`}>
-            <h1 className="font-cinzel text-5xl md:text-7xl lg:text-8xl text-black tracking-widest text-center mb-4">
-              Bienvenido a Pampa Ñusta
-            </h1>
-            <p className="font-mono text-sm tracking-[0.3em] text-black/70 uppercase text-center">
-              Pisac · Valle Sagrado · 3,347 m.s.n.m.
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* PHASE 3: STREET VIEW */}
-      {isPhase3 && (
-        <div className="absolute inset-0 z-10 bg-black flex flex-col animate-in fade-in duration-1000">
-          
-          {/* Panoramic Image Container */}
-          <div 
-            className="flex-1 relative overflow-hidden cursor-grab active:cursor-grabbing"
-            onMouseDown={handlePanoramaMouseDown}
-            onMouseMove={handlePanoramaMouseMove}
-            onMouseUp={handlePanoramaMouseUp}
-            onMouseLeave={handlePanoramaMouseUp}
-            onTouchStart={handlePanoramaMouseDown}
-            onTouchMove={handlePanoramaMouseMove}
-            onTouchEnd={handlePanoramaMouseUp}
-          >
-            <div 
-              className="absolute inset-y-0 -inset-x-[100vw] bg-cover bg-center transition-transform duration-75 ease-out"
-              style={{
-                backgroundImage: `url('${views[currentViewIdx].image}')`,
-                transform: `translateX(${dragOffset + currentDrag}px) scale(1.1)`
-              }}
-            />
-            
-            {/* Street View UI Overlay */}
-            <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/40 via-transparent to-black/80" />
-
-            <div className="absolute top-6 left-6 flex items-center gap-3 bg-black/40 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 pointer-events-none">
-              <Radio size={14} className="text-[#00ae42] animate-pulse" />
-              <span className="font-mono text-xs tracking-wider text-white uppercase">EN VIVO · Pampa Ñusta, Pisac</span>
-            </div>
-
-            <div className="absolute top-6 right-20 flex flex-col items-end gap-1 bg-black/40 backdrop-blur-md px-4 py-2 rounded-lg border border-white/10 pointer-events-none">
-              <div className="flex items-center gap-2 text-white/70">
-                <Compass size={14} />
-                <span className="font-mono text-[10px] tracking-widest uppercase">Coordenadas GPS</span>
+          <div style={{ position: 'absolute', right: 18, top: '50%', transform: 'translateY(-50%)', display: 'flex', flexDirection: 'column', gap: 10, zIndex: 10 }}>
+            {LABELS.map((l, i) => (
+              <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 6, opacity: progress >= l.at ? 1 : 0.25, transition: 'opacity 0.4s' }}>
+                <div style={{
+                  width: progress >= l.at ? 9 : 5, height: progress >= l.at ? 9 : 5,
+                  borderRadius: '50%',
+                  background: progress >= l.at ? '#4ade80' : 'rgba(255,255,255,0.3)',
+                  boxShadow: progress >= l.at ? '0 0 10px #4ade80' : 'none',
+                  transition: 'all 0.4s',
+                }} />
               </div>
-              <span className="font-mono text-sm text-[#e8dcc4]">-13.4225, -71.8488</span>
-            </div>
-            
-            <div className="absolute inset-y-0 left-4 flex items-center pointer-events-auto">
-              <button 
-                onClick={(e) => { e.stopPropagation(); setCurrentViewIdx((prev) => (prev - 1 + views.length) % views.length); setDragOffset(0); }}
-                className="w-12 h-12 flex items-center justify-center bg-black/30 hover:bg-black/60 border border-white/20 rounded-full text-white backdrop-blur-md transition-all"
-              >
-                <ChevronLeft size={24} />
-              </button>
-            </div>
-            
-            <div className="absolute inset-y-0 right-4 flex items-center pointer-events-auto">
-              <button 
-                onClick={(e) => { e.stopPropagation(); setCurrentViewIdx((prev) => (prev + 1) % views.length); setDragOffset(0); }}
-                className="w-12 h-12 flex items-center justify-center bg-black/30 hover:bg-black/60 border border-white/20 rounded-full text-white backdrop-blur-md transition-all"
-              >
-                <ChevronRight size={24} />
-              </button>
-            </div>
-
+            ))}
           </div>
 
-          {/* Bottom Panel */}
-          <div className="h-48 bg-[#0a0a0a] border-t border-white/10 flex flex-col items-center justify-center gap-6 relative z-20">
-            
-            <div className="flex gap-4 px-6 max-w-full overflow-x-auto no-scrollbar">
-              {views.map((view, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => { setCurrentViewIdx(idx); setDragOffset(0); }}
-                  className={`relative w-32 h-20 rounded-lg overflow-hidden shrink-0 transition-all duration-300 ${currentViewIdx === idx ? 'ring-2 ring-[#00ae42] opacity-100 scale-105' : 'ring-1 ring-white/20 opacity-50 hover:opacity-80'}`}
-                >
-                  <img src={view.image} alt={view.name} className="absolute inset-0 w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-black/40 flex items-end p-2">
-                    <span className="font-mono text-[9px] tracking-wider text-white uppercase text-left leading-tight">{view.name}</span>
-                  </div>
-                </button>
-              ))}
+          {!arrived && (
+            <div style={{
+              position: 'absolute', top: '50%', left: '50%', 
+              transform: `translate(-50%, -50%) scale(${textScale})`,
+              textAlign: 'center', zIndex: 10, width: '100%', pointerEvents: 'none',
+              opacity: textOpacity,
+              filter: `blur(${textBlur}px)`
+            }}>
+              <p style={{
+                fontSize: 'clamp(24px, 6vw, 64px)', fontWeight: 900, color: '#fff',
+                textShadow: '0 0 40px rgba(255,255,255,0.8), 0 0 80px rgba(74,222,128,0.8)',
+                margin: 0, fontFamily: "'Inter', system-ui, sans-serif",
+                letterSpacing: '0.05em'
+              }}>
+                {label.text}
+              </p>
+              <p style={{
+                fontSize: 'clamp(14px, 3vw, 24px)', color: 'rgba(251,191,36,1)',
+                margin: '12px 0 0', fontWeight: 700,
+                textShadow: '0 0 20px rgba(251,191,36,0.6)',
+                fontFamily: "'Inter', system-ui, sans-serif",
+                letterSpacing: '0.1em', textTransform: 'uppercase'
+              }}>
+                {label.sub}
+              </p>
             </div>
+          )}
 
-            <button 
-              onClick={onClose}
-              className="flex items-center gap-2 px-8 py-3 bg-[#00ae42] hover:bg-[#13612e] text-white font-mono text-sm uppercase tracking-widest transition-colors rounded-none"
+          {progress < 0.06 && (
+            <div
+              onClick={() => advance(0.05)}
+              style={{
+                position: 'absolute', bottom: 28, left: '50%', transform: 'translateX(-50%)',
+                display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6,
+                zIndex: 20, cursor: 'pointer',
+              }}
             >
-              <Eye size={16} />
-              Explorar el Santuario Completo
-            </button>
-            
-          </div>
-        </div>
+              <span style={{
+                fontSize: 11, color: 'rgba(255,255,255,0.75)', fontWeight: 600,
+                letterSpacing: '0.18em', textTransform: 'uppercase',
+                fontFamily: "'Inter', sans-serif",
+              }}>
+                Desplázate o toca para viajar
+              </span>
+              <ChevronDown size={20} color="rgba(255,255,255,0.6)" />
+            </div>
+          )}
+
+          {/* White flash transition */}
+          {arrived && (
+            <div style={{
+              position: 'absolute', inset: 0, zIndex: 15,
+              background: `rgba(240,255,240,${Math.min(1, (progress - 0.94) / 0.06 * 0.95)})`,
+              transition: 'all 0.15s',
+              pointerEvents: 'none',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+            }}>
+              <div style={{
+                fontSize: 'clamp(20px, 6vw, 48px)', fontWeight: 900,
+                color: '#14532d', textAlign: 'center',
+                fontFamily: "'Inter', sans-serif",
+                opacity: Math.min(1, (progress - 0.94) / 0.04),
+              }}>
+                <div style={{ fontSize: 40, marginBottom: 8 }}>🌿</div>
+                Llegaste a Pampa Ñusta
+              </div>
+            </div>
+          )}
+        </>
       )}
+
+      {/* ── STREET VIEW OVERLAY ── */}
+      {showStreetView && (
+        <StreetView onExplore={onClose} />
+      )}
+
+      <style>{`
+        @keyframes bounceDown {
+          0%,100% { transform: translateY(0); }
+          50%      { transform: translateY(7px); }
+        }
+      `}</style>
     </div>
   );
 };

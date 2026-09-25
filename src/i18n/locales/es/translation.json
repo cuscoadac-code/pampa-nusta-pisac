@@ -1,0 +1,24 @@
+{
+  "header": {
+    "home": "Inicio",
+    "location": "Ubicación",
+    "facilities": "Instalaciones",
+    "donate": "Donar",
+    "contact": "Contacto",
+    "audioLog": "Audio Log",
+    "scenes": "Escenas",
+    "mute": "Mutear",
+    "audio": "Audio"
+  },
+  "hero": {
+    "audioOn": "AUDIO NATURALEZA",
+    "audioOff": "ACTIVAR AUDIO",
+    "video": "Video",
+    "poster": "Póster",
+    "badge": "ECOALDEA VIVA · VALLE SAGRADO",
+    "title": "PAMPA ÑUSTA",
+    "subtitle": "SANTUARIO VIVO",
+    "enter": "Ingresar",
+    "discover": "Descubrir"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "header": {
+    "home": "Início",
+    "location": "Localização",
+    "facilities": "Instalações",
+    "donate": "Doar",
+    "contact": "Contato",
+    "audioLog": "Diário de Áudio",
+    "scenes": "Cenas",
+    "mute": "Mudo",
+    "audio": "Áudio"
+  },
+  "hero": {
+    "audioOn": "ÁUDIO DA NATUREZA",
+    "audioOff": "ATIVAR ÁUDIO",
+    "video": "Vídeo",
+    "poster": "Pôster",
+    "badge": "ECOVILA VIVA · VALE SAGRADO",
+    "title": "PAMPA ÑUSTA",
+    "subtitle": "SANTUÁRIO VIVO",
+    "enter": "Entrar",
+    "discover": "Descobrir"
+  }
+}
