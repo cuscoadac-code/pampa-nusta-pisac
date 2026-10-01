@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, MapPin, Award, HeartHandshake, Leaf, Compass, Trees, MessageCircle, ShieldCheck, Lock, RotateCcw, Activity, CheckCircle2, ChevronRight, CreditCard, Building2, Mountain, Instagram, Facebook, Youtube, Mail, Send, CheckCircle } from 'lucide-react';
+import { Sparkles, MapPin, Award, HeartHandshake, Leaf, Compass, Trees, MessageCircle, ShieldCheck, Lock, RotateCcw, Activity, CheckCircle2, ChevronRight, CreditCard, Building2, Mountain, Instagram, Facebook, Youtube, Mail, Send, CheckCircle, FileText, Download, ExternalLink } from 'lucide-react';
 
 import { useTranslation } from 'react-i18next';
 
@@ -108,11 +108,11 @@ export const Footer: React.FC<FooterProps> = ({ onSelectModule, onOpenSecurityMo
             </h4>
             <ul className="space-y-4">
               <li>
-                <a href="mailto:contacto@pampanusta.com" className="text-sm font-medium hover:text-sadhana-primary text-sadhana-brown transition-colors flex items-center gap-3">
+                <a href="mailto:contacto@pampanusta.org" className="text-sm font-medium hover:text-sadhana-primary text-sadhana-brown transition-colors flex items-center gap-3">
                   <div className="w-8 h-8 rounded-lg bg-white border border-sadhana-dark/10 flex items-center justify-center text-sadhana-brown shadow-sm">
                     <Mail className="w-3.5 h-3.5" />
                   </div>
-                  info@pisacsacred.org
+                  contacto@pampañusta.org
                 </a>
               </li>
               <li>
@@ -174,9 +174,66 @@ export const Footer: React.FC<FooterProps> = ({ onSelectModule, onOpenSecurityMo
         </div>
 
         {/* ------------------------------------------------------------- */}
-        {/* COMPLIANCE, RISK-FREE & CERTIFICATIONS IN FOOTER (TEXTUAL)    */}
+        {/* ESTATUTO — BLOQUE DE DESCARGA                                 */}
         {/* ------------------------------------------------------------- */}
-        <div className="mt-12 mb-10 pt-8 pb-7 border-t border-sadhana-dark/10 relative z-10">
+        <div className="mt-12 mb-8 pt-10 border-t border-sadhana-dark/10 relative z-10">
+          <div className="relative rounded-2xl overflow-hidden">
+            {/* Fondo con gradiente sutil */}
+            <div className="absolute inset-0 bg-gradient-to-br from-sadhana-dark/5 via-sadhana-primary/5 to-sadhana-sand/30 rounded-2xl" />
+            <div className="absolute inset-0 border border-sadhana-primary/15 rounded-2xl" />
+
+            <div className="relative z-10 flex flex-col sm:flex-row items-center justify-between gap-6 px-8 py-7">
+              {/* Ícono + Texto */}
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-xl bg-sadhana-dark flex items-center justify-center shadow-lg shrink-0">
+                  <FileText className="w-6 h-6 text-sadhana-primary" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="font-mono text-[10px] font-extrabold uppercase tracking-widest text-sadhana-primary">Documento Legal</span>
+                    <span className="w-1 h-1 rounded-full bg-sadhana-dark/30" />
+                    <span className="font-mono text-[10px] text-sadhana-brown/60 uppercase tracking-wider">PDF / Imprimible</span>
+                  </div>
+                  <h4 className="font-sans font-bold text-sadhana-dark text-base sm:text-lg leading-snug">
+                    Estatuto Social — Asociación Civil Pampa Ñusta
+                  </h4>
+                  <p className="text-xs text-sadhana-brown/70 mt-1 font-medium">
+                    Código Civil Peruano, Arts. 80–98 · SUNARP Zona X, Cusco · Documento Fundacional 2026
+                  </p>
+                </div>
+              </div>
+
+              {/* Botones */}
+              <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
+                <a
+                  href="/estatuto-pampa-nusta.html"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-2 px-5 py-2.5 rounded-xl border border-sadhana-dark/20 bg-white/70 text-sadhana-brown text-xs font-bold uppercase tracking-wider hover:border-sadhana-primary hover:text-sadhana-primary transition-all duration-200 shadow-sm"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  Ver estatuto
+                </a>
+                <a
+                  href="/estatuto-pampa-nusta.html"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const w = window.open('/estatuto-pampa-nusta.html', '_blank');
+                    if (w) setTimeout(() => w.print(), 800);
+                  }}
+                  className="group relative flex items-center gap-2 px-6 py-2.5 rounded-xl bg-sadhana-dark text-white text-xs font-bold uppercase tracking-wider overflow-hidden shadow-lg hover:shadow-sadhana-primary/20 hover:scale-[1.02] transition-all duration-200"
+                >
+                  <div className="absolute inset-0 bg-sadhana-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                  <Download className="w-3.5 h-3.5 relative z-10" />
+                  <span className="relative z-10">Descargar PDF</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* COMPLIANCE */}
+        <div className="mb-8 pb-2 relative z-10">
           <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-xs font-mono font-bold text-sadhana-brown">
             <a href="https://ejemplo.com/ssl" target="_blank" rel="noopener noreferrer" className="hover:text-sadhana-primary transition-colors flex items-center gap-2 group">
               <Lock className="w-3.5 h-3.5 text-sadhana-primary/70 group-hover:text-sadhana-primary" />
@@ -184,11 +241,11 @@ export const Footer: React.FC<FooterProps> = ({ onSelectModule, onOpenSecurityMo
             </a>
             <a href="https://ejemplo.com/pagos" target="_blank" rel="noopener noreferrer" className="hover:text-sadhana-primary transition-colors flex items-center gap-2 group">
               <CreditCard className="w-3.5 h-3.5 text-sadhana-primary/70 group-hover:text-sadhana-primary" />
-              <span>{t('footer.legal.payments')}</span>
+              <span>Pagos Seguros</span>
             </a>
             <a href="https://ejemplo.com/garantia" target="_blank" rel="noopener noreferrer" className="hover:text-sadhana-primary transition-colors flex items-center gap-2 group">
               <RotateCcw className="w-3.5 h-3.5 text-sadhana-primary/70 group-hover:text-sadhana-primary" />
-              <span>{t('footer.legal.guarantee')}</span>
+              <span>Garantía de Confianza</span>
             </a>
           </div>
         </div>

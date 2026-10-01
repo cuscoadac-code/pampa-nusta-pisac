@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Estatuto Social — Asociación Civil Pampa Ñusta · Pisac, Cusco</title>
+  <meta name="description" content="Estatuto constitutivo de la Asociación Civil Sin Fines de Lucro Pampa Ñusta, Pisac, Valle Sagrado, Cusco, Perú." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Dosis:wght@300;400;500;600;700;800&family=Syne:wght@400;600;700;800&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary:    #00ae42;
+      --dark:       #13612e;
+      --sand:       #e8dcc4;
+      --sand-light: #f7f3ec;
+      --brown:      #3d2e1f;
+      --orange:     #ec8551;
+      --white:      #ffffff;
+      --text:       #2a201a;
+      --muted:      #6b5744;
+      --border:     rgba(19,97,46,0.13);
+      --gold:       #b8831a;
+      --gold-light: #f5eddc;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Dosis', sans-serif; background: var(--white); color: var(--text); font-size: 14.5px; line-height: 1.75; }
+
+    /* ── BARRA STICKY ───────────────────────────────────── */
+    .print-bar {
+      position: sticky; top: 0; z-index: 200;
+      background: var(--dark);
+      padding: 10px 36px;
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      box-shadow: 0 2px 24px rgba(0,0,0,0.25);
+    }
+    .print-bar-left { display: flex; align-items: center; gap: 10px; }
+    .print-bar-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--primary); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.6;transform:scale(1.3)} }
+    .print-bar-text { font-family: 'Syne', sans-serif; font-size: 11px; font-weight: 700; letter-spacing: .2em; text-transform: uppercase; color: rgba(255,255,255,.55); }
+    .print-bar-text span { color: var(--primary); }
+    .print-bar-right { display: flex; gap: 10px; }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 18px; border-radius: 100px;
+      border: 1px solid rgba(255,255,255,.2); background: transparent;
+      color: rgba(255,255,255,.75); font-family: 'Dosis', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: .07em; cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 22px; border-radius: 100px;
+      border: none; background: var(--primary);
+      color: white; font-family: 'Dosis', sans-serif;
+      font-size: 12px; font-weight: 700; letter-spacing: .07em; cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-primary:hover { background: var(--orange); transform: translateY(-1px); }
+    .btn-primary svg, .btn-outline svg { width: 14px; height: 14px; }
+
+    /* ── PORTADA ────────────────────────────────────────── */
+    .cover {
+      min-height: 100vh;
+      background: linear-gradient(150deg, #0a3d1f 0%, #13612e 35%, #1d7a3f 60%, #0f5527 100%);
+      display: flex; flex-direction: column;
+      position: relative; overflow: hidden;
+      page-break-after: always;
+    }
+    .cover::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 30% 40%, rgba(0,174,66,.15) 0%, transparent 60%),
+                  radial-gradient(ellipse at 75% 70%, rgba(236,133,81,.08) 0%, transparent 50%);
+    }
+    .cover::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.025'%3E%3Cpath d='M40 0L80 40L40 80L0 40Z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+    .cover-topbar {
+      position: relative; z-index: 10;
+      padding: 18px 48px;
+      display: flex; align-items: center; justify-content: space-between;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.15);
+    }
+    .cover-brand { display: flex; align-items: center; gap: 12px; }
+    .cover-logo {
+      width: 38px; height: 38px; border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,.3);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px; background: rgba(255,255,255,.06);
+    }
+    .cover-brand-name {
+      font-family: 'Syne', sans-serif; font-weight: 800;
+      font-size: 12px; letter-spacing: .25em; text-transform: uppercase;
+      color: rgba(255,255,255,.85);
+    }
+    .cover-legal-tag {
+      font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: .2em; text-transform: uppercase;
+      color: rgba(255,255,255,.4);
+      border: 1px solid rgba(255,255,255,.15);
+      padding: 4px 12px; border-radius: 100px;
+    }
+    .cover-body {
+      flex: 1; position: relative; z-index: 10;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      padding: 56px 48px;
+      text-align: center;
+    }
+    .cover-pill {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 20px; border-radius: 100px;
+      border: 1px solid rgba(255,255,255,.2);
+      background: rgba(255,255,255,.06);
+      font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: .3em; text-transform: uppercase;
+      color: rgba(255,255,255,.6); margin-bottom: 32px;
+    }
+    .cover-title {
+      font-family: 'Dosis', sans-serif; font-weight: 800;
+      font-size: clamp(56px, 11vw, 104px);
+      letter-spacing: .1em; text-transform: uppercase; line-height: .95;
+      color: white; margin-bottom: 10px;
+      text-shadow: 0 8px 48px rgba(0,0,0,.35);
+    }
+    .cover-sub {
+      font-family: 'Syne', sans-serif; font-weight: 600;
+      font-size: 12px; letter-spacing: .25em; text-transform: uppercase;
+      color: var(--orange); margin-bottom: 44px;
+    }
+    .cover-hr { width: 60px; height: 2px; background: linear-gradient(90deg,transparent,var(--orange),transparent); margin: 0 auto 44px; }
+    .cover-card {
+      background: rgba(255,255,255,.07);
+      backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 28px;
+      padding: 44px 60px;
+      max-width: 660px; width: 100%;
+    }
+    .cover-card-eyebrow {
+      font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: .3em; text-transform: uppercase;
+      color: var(--primary); margin-bottom: 12px;
+    }
+    .cover-card-title {
+      font-family: 'Dosis', sans-serif; font-weight: 700;
+      font-size: 30px; letter-spacing: .05em; color: white;
+      margin-bottom: 18px;
+    }
+    .cover-card-desc {
+      font-size: 13px; color: rgba(255,255,255,.6);
+      line-height: 1.75; margin-bottom: 30px;
+    }
+    .cover-elements { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+    .el-tag {
+      padding: 5px 16px; border-radius: 100px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(255,255,255,.05);
+      font-size: 10px; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase;
+      color: rgba(255,255,255,.55);
+    }
+    .cover-footer {
+      position: relative; z-index: 10;
+      background: rgba(0,0,0,.25);
+      border-top: 1px solid rgba(255,255,255,.07);
+      padding: 20px 48px;
+      display: grid; grid-template-columns: repeat(4,1fr); gap: 20px;
+    }
+    .cover-meta { text-align: center; }
+    .cover-meta-l { font-size: 9px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.35); margin-bottom: 4px; }
+    .cover-meta-v { font-family: 'Syne', sans-serif; font-size: 12px; font-weight: 700; color: rgba(255,255,255,.8); }
+
+    /* ── CUERPO ─────────────────────────────────────────── */
+    .page { max-width: 860px; margin: 0 auto; padding: 64px 48px; }
+
+    /* Cabecera de sección dentro del doc */
+    .doc-header {
+      margin-bottom: 48px; padding-bottom: 24px;
+      border-bottom: 2px solid var(--border);
+      display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+    }
+    .doc-header-info { flex: 1; }
+    .doc-header-label {
+      font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: .28em; text-transform: uppercase;
+      color: var(--primary); margin-bottom: 8px;
+    }
+    .doc-header-title {
+      font-family: 'Dosis', sans-serif; font-weight: 800;
+      font-size: 22px; color: var(--dark); letter-spacing: .04em;
+    }
+    .doc-header-marco {
+      background: var(--gold-light); border: 1px solid rgba(184,131,26,.25);
+      border-radius: 10px; padding: 12px 16px; max-width: 320px; font-size: 11px;
+      color: var(--brown); line-height: 1.6;
+    }
+    .doc-header-marco strong { color: var(--gold); }
+
+    /* Título (bloque verde) */
+    .titulo { margin: 52px 0 20px; page-break-inside: avoid; }
+    .titulo-box {
+      background: linear-gradient(135deg, var(--dark) 0%, #1d8a42 100%);
+      border-radius: 14px; padding: 14px 22px;
+      display: flex; align-items: center; gap: 14px;
+      box-shadow: 0 4px 20px rgba(19,97,46,.2);
+    }
+    .titulo-pill {
+      background: rgba(255,255,255,.12); border-radius: 6px;
+      padding: 3px 11px; font-family: 'Syne', sans-serif;
+      font-size: 9px; font-weight: 700; letter-spacing: .22em; text-transform: uppercase;
+      color: rgba(255,255,255,.65); white-space: nowrap; flex-shrink: 0;
+    }
+    .titulo h2 {
+      font-family: 'Dosis', sans-serif; font-size: 14px; font-weight: 800;
+      letter-spacing: .1em; text-transform: uppercase; color: white; margin: 0;
+    }
+
+    /* Capítulo */
+    .capitulo {
+      margin: 32px 0 14px;
+      padding: 9px 16px 9px 14px;
+      background: rgba(0,174,66,.06);
+      border-left: 3px solid var(--primary);
+      border-radius: 0 8px 8px 0;
+    }
+    .capitulo h3 {
+      font-family: 'Syne', sans-serif; font-size: 10.5px; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase; color: var(--dark); margin: 0;
+    }
+
+    /* Artículo */
+    .art {
+      margin: 16px 0;
+      border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+      page-break-inside: avoid;
+      background: var(--white);
+      transition: box-shadow .2s;
+    }
+    .art:hover { box-shadow: 0 4px 24px rgba(19,97,46,.08); }
+    .art-head {
+      display: flex; align-items: center; gap: 12px;
+      padding: 13px 20px 0;
+    }
+    .art-num {
+      display: inline-block;
+      background: var(--gold-light); border: 1px solid rgba(184,131,26,.22);
+      border-radius: 6px; padding: 2px 10px;
+      font-family: 'Syne', sans-serif; font-size: 9.5px; font-weight: 700;
+      letter-spacing: .15em; color: var(--gold); white-space: nowrap;
+    }
+    .art-title {
+      font-family: 'Dosis', sans-serif; font-size: 15px; font-weight: 700;
+      color: var(--dark);
+    }
+    .art-body {
+      padding: 10px 20px 16px;
+      font-size: 13.5px; color: var(--text); line-height: 1.78;
+    }
+    .art-body p { margin-bottom: 7px; }
+    .art-body p:last-child { margin-bottom: 0; }
+    .art-body ul { padding-left: 20px; margin: 6px 0; }
+    .art-body ul li { margin-bottom: 4px; }
+    .art-body strong { color: var(--dark); }
+    .art-body em { color: var(--muted); }
+
+    /* Tabla */
+    .tbl-wrap { margin: 12px 0 4px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: linear-gradient(135deg, var(--dark), #1d8a42); }
+    thead th {
+      padding: 9px 14px; font-family: 'Syne', sans-serif;
+      font-size: 9.5px; font-weight: 700; letter-spacing: .16em;
+      text-transform: uppercase; color: white; text-align: left;
+    }
+    tbody tr:nth-child(even) { background: rgba(0,174,66,.04); }
+    tbody td { padding: 9px 14px; font-size: 13px; color: var(--text); border-top: 1px solid var(--border); }
+    tbody td:first-child { font-weight: 600; color: var(--dark); }
+
+    /* Comisiones list */
+    .comisiones { padding: 4px 0 0 2px; }
+    .com-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 14px; margin: 4px 0;
+      background: rgba(0,174,66,.04); border-radius: 8px;
+      border: 1px solid rgba(0,174,66,.1);
+      font-size: 13.5px; font-weight: 600; color: var(--dark);
+    }
+    .com-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--primary); flex-shrink: 0; }
+
+    /* Alertas */
+    .alerta {
+      display: flex; gap: 14px; padding: 16px 20px;
+      border-radius: 12px; margin: 16px 0; page-break-inside: avoid;
+    }
+    .alerta.verde { background: rgba(0,174,66,.07); border: 1px solid rgba(0,174,66,.2); }
+    .alerta.dorada { background: var(--gold-light); border: 1px solid rgba(184,131,26,.25); }
+    .alerta.naranja { background: rgba(236,133,81,.08); border: 1px solid rgba(236,133,81,.25); }
+    .alerta-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .alerta-body { font-size: 13px; line-height: 1.7; color: var(--text); }
+    .alerta-body strong { color: var(--dark); }
+    .alerta-title { font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase; color: var(--gold); margin-bottom: 5px; }
+
+    /* Disposiciones transitorias */
+    .transitoria {
+      margin: 14px 0;
+      padding: 14px 20px;
+      background: var(--sand-light); border: 1px solid var(--border);
+      border-left: 3px solid var(--orange); border-radius: 0 10px 10px 0;
+    }
+    .transitoria-title {
+      font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase; color: var(--orange); margin-bottom: 6px;
+    }
+    .transitoria-body { font-size: 13.5px; color: var(--text); line-height: 1.72; }
+
+    /* Firmas */
+    .firma-section { margin-top: 40px; }
+    .firma-intro { font-size: 13.5px; color: var(--text); line-height: 1.7; margin-bottom: 24px; }
+    .firma-grid {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 28px;
+      margin-bottom: 28px;
+    }
+    .firma-item { display: flex; flex-direction: column; gap: 8px; }
+    .firma-line { border-bottom: 1.5px solid var(--brown); height: 52px; }
+    .firma-cargo {
+      font-family: 'Syne', sans-serif; font-size: 9.5px; font-weight: 700;
+      letter-spacing: .18em; text-transform: uppercase; color: var(--dark);
+    }
+    .firma-campo { font-size: 11.5px; color: var(--muted); }
+    .firma-fecha {
+      padding: 14px 20px;
+      background: var(--sand-light); border: 1px solid var(--border); border-radius: 10px;
+      font-family: 'Syne', sans-serif; font-size: 10px; font-weight: 700;
+      letter-spacing: .15em; text-transform: uppercase; color: var(--dark);
+    }
+
+    /* Tabla de firmas (versión en tabla) */
+    .tbl-firmas thead tr { background: linear-gradient(135deg, var(--dark), #1d8a42); }
+    .tbl-firmas tbody td { height: 38px; vertical-align: middle; }
+    .tbl-firmas tbody td:last-child { min-width: 80px; }
+
+    /* Doc footer */
+    .doc-footer {
+      margin-top: 56px; padding-top: 28px;
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    }
+    .df-brand { display: flex; align-items: center; gap: 10px; }
+    .df-logo {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: var(--dark); display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+    }
+    .df-name { font-family: 'Dosis', sans-serif; font-size: 13px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--dark); }
+    .df-sub { font-size: 11px; color: var(--muted); }
+    .df-legal { font-size: 11px; color: var(--muted); text-align: right; line-height: 1.6; }
+
+    /* ── PRINT ──────────────────────────────────────────── */
+    @media print {
+      .print-bar { display: none !important; }
+      body { font-size: 12px; }
+      .cover { min-height: 100vh; page-break-after: always; }
+      .cover-footer { grid-template-columns: repeat(4,1fr); }
+      .page { padding: 28px 32px; }
+      .art { break-inside: avoid; }
+      @page { margin: 16mm 18mm; size: A4; }
+      @page:first { margin: 0; }
+    }
+    @media (max-width: 640px) {
+      .page { padding: 28px 20px; }
+      .cover-footer { grid-template-columns: repeat(2,1fr); }
+      .firma-grid { grid-template-columns: 1fr; }
+      .cover-card { padding: 28px 24px; }
+      .print-bar { padding: 10px 16px; }
+      .doc-header { flex-direction: column; }
+      .doc-header-marco { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── BARRA STICKY ──────────────────────────────────────── -->
+<div class="print-bar">
+  <div class="print-bar-left">
+    <div class="print-bar-dot"></div>
+    <div class="print-bar-text"><span>PAMPA ÑUSTA</span> · Estatuto Social · Asociación Civil Sin Fines de Lucro · 2026</div>
+  </div>
+  <div class="print-bar-right">
+    <button class="btn-outline" onclick="window.open('/estatuto-pampa-nusta.html','_blank')">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/></svg>
+      Ver
+    </button>
+    <button class="btn-primary" onclick="window.print()">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      Guardar como PDF
+    </button>
+  </div>
+</div>
+
+<!-- ── PORTADA ───────────────────────────────────────────── -->
+<div class="cover">
+  <div class="cover-topbar">
+    <div class="cover-brand">
+      <div class="cover-logo">🌿</div>
+      <div class="cover-brand-name">Pampa Ñusta · Pisac · Cusco · Perú</div>
+    </div>
+    <div class="cover-legal-tag">Documento Fundacional 2026</div>
+  </div>
+
+  <div class="cover-body">
+    <div class="cover-pill"><span>⬡</span> Asociación Civil Sin Fines de Lucro</div>
+    <div class="cover-title">PAMPA<br>ÑUSTA</div>
+    <div class="cover-sub">Pisac · Valle Sagrado · Cusco · Perú · 3,347 m.s.n.m.</div>
+    <div class="cover-hr"></div>
+    <div class="cover-card">
+      <div class="cover-card-eyebrow">▸ Documento Legal Constitutivo</div>
+      <div class="cover-card-title">ESTATUTO SOCIAL</div>
+      <div class="cover-card-desc">
+        Establece la denominación, fines, estructura orgánica, régimen de asociados, patrimonio
+        y normas de funcionamiento de la <strong style="color:rgba(255,255,255,.85)">Asociación Civil Sin Fines de Lucro PAMPA ÑUSTA</strong>,
+        conforme al Código Civil Peruano, artículos 80 al 98 · D.Leg. N.° 295 · Ley N.° 27444 · Ley N.° 28716 · Res. SUNARP N.° 038-2013-SUNARP/SN.
+      </div>
+      <div class="cover-elements">
+        <span class="el-tag">🌿 Tierra</span>
+        <span class="el-tag">💧 Agua</span>
+        <span class="el-tag">🔥 Fuego</span>
+        <span class="el-tag">💨 Viento</span>
+        <span class="el-tag">✨ Éter</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="cover-footer">
+    <div class="cover-meta">
+      <div class="cover-meta-l">Tipo de entidad</div>
+      <div class="cover-meta-v">Asoc. Civil S.F.L.</div>
+    </div>
+    <div class="cover-meta">
+      <div class="cover-meta-l">Marco legal</div>
+      <div class="cover-meta-v">CC Peruano 80–98</div>
+    </div>
+    <div class="cover-meta">
+      <div class="cover-meta-l">Registro</div>
+      <div class="cover-meta-v">SUNARP Zona X, Cusco</div>
+    </div>
+    <div class="cover-meta">
+      <div class="cover-meta-l">Constitución</div>
+      <div class="cover-meta-v">2026 · Pisac, Cusco</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── CUERPO DEL DOCUMENTO ──────────────────────────────── -->
+<div class="page">
+
+  <!-- Cabecera del documento -->
+  <div class="doc-header">
+    <div class="doc-header-info">
+      <div class="doc-header-label">Documento Legal Constitutivo</div>
+      <div class="doc-header-title">ESTATUTO DE LA ASOCIACIÓN CIVIL<br>SIN FINES DE LUCRO "PAMPA ÑUSTA"</div>
+    </div>
+    <div class="doc-header-marco">
+      <strong>Marco legal:</strong><br>
+      Código Civil Peruano, Libro I — Sección Segunda, Arts. 80–98 · D.Leg. N.° 295 · Ley N.° 27444 · Ley N.° 28716 · Res. SUNARP N.° 038-2013-SUNARP/SN
+    </div>
+  </div>
+
+  <!-- ═══ TÍTULO I ═══ -->
+  <div class="titulo">
+    <div class="titulo-box">
+      <span class="titulo-pill">Título I</span>
+      <h2>Denominación, Sede, Duración y Naturaleza</h2>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 1°</span><span class="art-title">Denominación</span></div>
+    <div class="art-body">Se constituye la Asociación Civil Sin Fines de Lucro denominada <strong>PAMPA ÑUSTA</strong>, en adelante también llamada "la Asociación", persona jurídica de derecho privado, sin fines de lucro, regida por el Código Civil Peruano y el presente Estatuto.</div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 2°</span><span class="art-title">Sede Social</span></div>
+    <div class="art-body">
+      <p>La sede principal de la Asociación se encuentra ubicada en el distrito de <strong>Pisac</strong>, provincia de <strong>Calca</strong>, departamento de <strong>Cusco</strong>, República del Perú, a una altitud de 3,347 m.s.n.m., en el predio denominado Pampa Ñusta.</p>
+      <p>La Junta Directiva podrá establecer sedes secundarias, representaciones o delegaciones en cualquier lugar del territorio nacional o en el extranjero, mediante acuerdo adoptado en sesión ordinaria.</p>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 3°</span><span class="art-title">Duración</span></div>
+    <div class="art-body">La Asociación tiene duración <strong>indefinida</strong>, iniciándose sus actividades a partir de la inscripción de la presente escritura pública en los Registros Públicos — SUNARP, Zona Registral N.° X, Sede Cusco. Podrá disolverse por las causales establecidas en el presente Estatuto y en la legislación vigente.</div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 4°</span><span class="art-title">Naturaleza Jurídica</span></div>
+    <div class="art-body">PAMPA ÑUSTA es una persona jurídica de derecho privado, sin fines de lucro, apolítica, no religiosa en sentido sectario, y no discriminatoria por razones de género, raza, origen étnico, condición económica o creencia. Sus actividades tienen carácter ecológico, cultural, espiritual, educativo, científico y social, orientadas al bien común de las comunidades andinas y de la humanidad.</div>
+  </div>
+
+  <!-- ═══ TÍTULO II ═══ -->
+  <div class="titulo">
+    <div class="titulo-box">
+      <span class="titulo-pill">Título II</span>
+      <h2>Fines y Objeto Social</h2>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 5°</span><span class="art-title">Fines Generales</span></div>
+    <div class="art-body">
+      <p>PAMPA ÑUSTA tiene por fines:</p>
+      <p><strong>a) Conservación y Custodia de la Biodiversidad Andina:</strong> Establecer, gestionar y ampliar un banco genético vivo de semillas sagradas andinas, con especial énfasis en el cactus <em>Echinopsis pachanoi</em> (Wachuma o San Pedro) y otras especies etnobotánicas de los Andes del Sur del Perú, en coordinación con el Servicio Nacional Forestal y de Fauna Silvestre (SERFOR) y demás autoridades competentes.</p>
+      <p><strong>b) Bioconstrucción y Tecnología Ancestral:</strong> Investigar, desarrollar, difundir y aplicar técnicas de bioconstrucción andina — incluyendo construcción en adobe, quincha, piedra, bahareque y tierra apisonada (tapial) — como alternativa sostenible de hábitat que integre el conocimiento ancestral con estándares técnicos contemporáneos.</p>
+      <p><strong>c) Educación Ecológica y Permacultura:</strong> Diseñar e implementar programas de educación no formal, talleres, residencias y escuelas vivas orientadas a la regeneración ecológica, permacultura, agroforestería y soberanía alimentaria, destinados a comunidades locales, jóvenes y población en general.</p>
+      <p><strong>d) Ceremonialidad y Patrimonio Inmaterial:</strong> Preservar, revitalizar y difundir el patrimonio cultural inmaterial andino, incluyendo rituales, cosmovisión quechua, medicina tradicional y prácticas ceremoniales ancestrales, en estricto cumplimiento de la Ley N.° 28296 — Ley General del Patrimonio Cultural de la Nación.</p>
+      <p><strong>e) Investigación Científica y Documentación:</strong> Promover y ejecutar investigaciones etnobotánicas, arqueológicas, antropológicas y ambientales en la región de Pisac y el Valle Sagrado de los Incas, en articulación con universidades, institutos de investigación y organismos internacionales.</p>
+      <p><strong>f) Desarrollo Comunitario Sostenible:</strong> Impulsar modelos de desarrollo económico local basados en el turismo regenerativo, el ecoturismo vivencial, la artesanía andina y la economía circular, generando oportunidades de empleo digno para las comunidades campesinas del distrito de Pisac.</p>
+      <p><strong>g) Cooperación Internacional:</strong> Establecer redes de cooperación técnica, cultural y financiera con organizaciones nacionales e internacionales que compartan los principios y objetivos de la Asociación.</p>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 6°</span><span class="art-title">Actividades Instrumentales</span></div>
+    <div class="art-body">
+      <p>Para el cumplimiento de sus fines, la Asociación podrá:</p>
+      <ul>
+        <li>Adquirir, administrar y enajenar bienes muebles e inmuebles.</li>
+        <li>Recibir donaciones, legados, subvenciones y aportes de personas naturales y jurídicas, nacionales o extranjeras.</li>
+        <li>Suscribir convenios, contratos y acuerdos de cooperación interinstitucional.</li>
+        <li>Ejecutar proyectos con financiamiento público, privado o de la cooperación internacional.</li>
+        <li>Publicar materiales educativos, investigaciones, revistas y contenidos digitales.</li>
+        <li>Organizar eventos, ferias, festivales y encuentros culturales.</li>
+        <li>Crear empresas sociales, fondos concursables o mecanismos de financiamiento que apoyen sus fines sin distribuir utilidades entre los asociados.</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ═══ TÍTULO III ═══ -->
+  <div class="titulo">
+    <div class="titulo-box">
+      <span class="titulo-pill">Título III</span>
+      <h2>Patrimonio y Régimen Económico</h2>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 7°</span><span class="art-title">Patrimonio Inicial</span></div>
+    <div class="art-body">El patrimonio inicial de la Asociación está constituido por los aportes efectuados por los asociados fundadores, conforme al Acta de Constitución, y por todos los bienes, derechos y obligaciones que se incorporen posteriormente en virtud del presente Estatuto.</div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 8°</span><span class="art-title">Recursos Económicos</span></div>
+    <div class="art-body">
+      <p>Constituyen recursos de la Asociación:</p>
+      <p><strong>a)</strong> Las cuotas de admisión, ordinarias y extraordinarias que aporten los asociados, conforme a los montos fijados por la Asamblea General.</p>
+      <p><strong>b)</strong> Las donaciones, legados, herencias, subvenciones y transferencias a título gratuito provenientes de personas naturales o jurídicas, nacionales o extranjeras.</p>
+      <p><strong>c)</strong> Los ingresos generados por la prestación de servicios relacionados con los fines sociales: talleres, residencias, visitas guiadas, consultoría en bioconstrucción, venta de semillas certificadas y productos agroecológicos.</p>
+      <p><strong>d)</strong> Los rendimientos, rentas e intereses de los bienes e inversiones del patrimonio asociativo.</p>
+      <p><strong>e)</strong> Los fondos provenientes de proyectos ejecutados con financiamiento de la cooperación técnica internacional, fondos concursables del Estado peruano, organismos multilaterales (BID, PNUD, GEF, etc.) u organizaciones no gubernamentales.</p>
+      <p><strong>f)</strong> Cualquier otro ingreso lícito compatible con los fines de la Asociación.</p>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 9°</span><span class="art-title">Destino de los Recursos</span></div>
+    <div class="art-body">Los recursos de la Asociación se destinarán exclusivamente al cumplimiento de sus fines estatutarios. <strong>Queda expresamente prohibido distribuir, directa o indirectamente, beneficios económicos, remanentes o utilidades entre los asociados.</strong> El ejercicio económico coincide con el año calendario (del 1 de enero al 31 de diciembre).</div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 10°</span><span class="art-title">Régimen Tributario</span></div>
+    <div class="art-body">La Asociación gestionará ante la Superintendencia Nacional de Aduanas y de Administración Tributaria (SUNAT) su inscripción en el Registro de Entidades Exoneradas del Impuesto a la Renta, conforme al Artículo 19.° del Texto Único Ordenado de la Ley del Impuesto a la Renta (D.S. N.° 179-2004-EF) y la Ley N.° 27386, en tanto cumpla las condiciones legales aplicables.</div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 11°</span><span class="art-title">Contabilidad y Auditoría</span></div>
+    <div class="art-body">La Asociación llevará contabilidad completa conforme a los principios de contabilidad generalmente aceptados y las normas emitidas por el Consejo Normativo de Contabilidad. La Junta Directiva presentará a la Asamblea General, dentro de los noventa (90) días siguientes al cierre del ejercicio, los estados financieros auditados, la memoria anual y el presupuesto del ejercicio siguiente.</div>
+  </div>
+
+  <!-- ═══ TÍTULO IV ═══ -->
+  <div class="titulo">
+    <div class="titulo-box">
+      <span class="titulo-pill">Título IV</span>
+      <h2>De los Asociados</h2>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 12°</span><span class="art-title">Clases de Asociados</span></div>
+    <div class="art-body">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Categoría</th><th>Descripción</th><th>Voto</th></tr></thead>
+          <tbody>
+            <tr><td>Fundadores</td><td>Quienes suscriben el Acta de Constitución. Gozan de todos los derechos desde la fecha de constitución.</td><td>✅ Sí</td></tr>
+            <tr><td>Activos</td><td>Personas naturales (mayores de 18 años) o jurídicas, admitidas posteriormente, al día en cuotas, que participen activamente.</td><td>✅ Sí</td></tr>
+            <tr><td>Honorarios</td><td>Designados por méritos extraordinarios por la Asamblea General. Sin obligación de cuotas.</td><td>❌ No</td></tr>
+            <tr><td>Colaboradores</td><td>Apoyan puntualmente proyectos o actividades sin asumir compromisos permanentes.</td><td>❌ No</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 13°</span><span class="art-title">Admisión de Nuevos Asociados</span></div>
+    <div class="art-body">
+      <p>Para ser admitido como asociado activo se requiere:</p>
+      <ul>
+        <li>Presentar solicitud escrita a la Junta Directiva, acompañada de currículum vitae o presentación institucional.</li>
+        <li>Ser avalado por dos (2) asociados activos con antigüedad mínima de un (1) año.</li>
+        <li>Acreditar afinidad con los fines y valores de la Asociación, incluyendo al menos una experiencia documentada en áreas relacionadas.</li>
+        <li>Abonar la cuota de admisión fijada por la Asamblea General.</li>
+        <li>Obtener aprobación de la Junta Directiva por mayoría simple. Contra la denegatoria cabe recurso de apelación ante la Asamblea General.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 14°</span><span class="art-title">Derechos de los Asociados</span></div>
+    <div class="art-body">
+      <p>Los asociados activos y fundadores tienen derecho a:</p>
+      <p><strong>a)</strong> Participar con voz y voto en las Asambleas Generales. <strong>b)</strong> Elegir y ser elegidos para los órganos de gobierno. <strong>c)</strong> Acceder a la información financiera, patrimonial y administrativa. <strong>d)</strong> Usar las instalaciones y servicios conforme a los reglamentos internos. <strong>e)</strong> Presentar iniciativas y propuestas ante los órganos competentes. <strong>f)</strong> Recibir reconocimiento público por sus contribuciones. <strong>g)</strong> Impugnar los acuerdos que contravengan la ley o el Estatuto.</p>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 15°</span><span class="art-title">Obligaciones de los Asociados</span></div>
+    <div class="art-body">
+      <p><strong>a)</strong> Cumplir el Estatuto, reglamentos y acuerdos válidos. <strong>b)</strong> Abonar puntualmente las cuotas aprobadas. <strong>c)</strong> Desempeñar con diligencia los cargos asignados. <strong>d)</strong> Preservar el patrimonio e imagen institucional. <strong>e)</strong> Abstenerse de actos contrarios a los fines. <strong>f)</strong> Mantener la confidencialidad de los asuntos internos así calificados. <strong>g)</strong> Comunicar cambios de datos de contacto dentro de los 30 días de producido.</p>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 16°</span><span class="art-title">Pérdida de la Condición de Asociado</span></div>
+    <div class="art-body">
+      <p>La calidad de asociado se pierde por:</p>
+      <p><strong>a)</strong> Renuncia voluntaria, comunicada por escrito con treinta (30) días de anticipación. <strong>b)</strong> Fallecimiento o disolución de la persona jurídica asociada. <strong>c)</strong> Exclusión por Asamblea General con quórum y mayoría calificada de 2/3, por:</p>
+      <ul>
+        <li>Mora en el pago de cuotas por más de seis (6) meses consecutivos.</li>
+        <li>Conducta gravemente contraria a los fines, valores o imagen de la Asociación.</li>
+        <li>Condena penal firme por delito doloso.</li>
+        <li>Incumplimiento reiterado de las obligaciones estatutarias.</li>
+      </ul>
+      <p>El asociado sujeto a exclusión tiene derecho a ser notificado con 30 días de anticipación y a presentar sus descargos. La pérdida de la condición de asociado no genera derecho a reembolso del patrimonio ni de las cuotas aportadas.</p>
+    </div>
+  </div>
+
+  <!-- ═══ TÍTULO V ═══ -->
+  <div class="titulo">
+    <div class="titulo-box">
+      <span class="titulo-pill">Título V</span>
+      <h2>Estructura y Órganos de Gobierno</h2>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 17°</span><span class="art-title">Órganos de la Asociación</span></div>
+    <div class="art-body">
+      <div class="comisiones">
+        <div class="com-item"><span class="com-dot"></span>La Asamblea General (órgano supremo)</div>
+        <div class="com-item"><span class="com-dot"></span>La Junta Directiva (órgano ejecutivo)</div>
+        <div class="com-item"><span class="com-dot"></span>El Órgano de Fiscalización — Comisión de Vigilancia</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="capitulo"><h3>Capítulo I — Asamblea General</h3></div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 18°</span><span class="art-title">Definición y Naturaleza</span></div>
+    <div class="art-body">La Asamblea General es el <strong>órgano supremo</strong> de la Asociación. Está integrada por todos los asociados fundadores y activos hábiles al momento de la convocatoria. Sus acuerdos obligan a todos los asociados, incluso a los disidentes y ausentes, siempre que hayan sido adoptados conforme a la ley y al presente Estatuto.</div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 19°</span><span class="art-title">Clases de Asamblea General</span></div>
+    <div class="art-body">
+      <p><strong>a) Asamblea General Ordinaria:</strong> Se reunirá obligatoriamente dos (2) veces al año:</p>
+      <ul>
+        <li>Primera sesión: dentro de los 90 días siguientes al cierre del ejercicio (marzo-abril), para aprobar la memoria anual, estados financieros e informe de la Comisión de Vigilancia.</li>
+        <li>Segunda sesión: en el mes de octubre, para aprobar el presupuesto del ejercicio siguiente y planificar actividades.</li>
+      </ul>
+      <p><strong>b) Asamblea General Extraordinaria:</strong> Se reunirá cuando lo requieran las circunstancias, a convocatoria de la Junta Directiva, de la Comisión de Vigilancia, o a solicitud escrita de al menos el 20% de los asociados hábiles.</p>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 20°</span><span class="art-title">Convocatoria</span></div>
+    <div class="art-body">
+      <p>La convocatoria se realizará con mínimo <strong>15 días</strong> de anticipación para las ordinarias y <strong>8 días</strong> para las extraordinarias, mediante comunicación escrita o electrónica, indicando: lugar, fecha y hora; orden del día completo; y documentación relevante a tratar.</p>
+      <p>No podrán adoptarse acuerdos sobre asuntos no incluidos en el orden del día, salvo declaración de urgencia aprobada por unanimidad de los presentes.</p>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 21°</span><span class="art-title">Quórum y Validez</span></div>
+    <div class="art-body">
+      <p><strong>Primera convocatoria:</strong> Requiere la presencia de más de la mitad (50%+1) de los asociados hábiles.</p>
+      <p><strong>Segunda convocatoria:</strong> Se realiza una (1) hora después de la primera. Es válida con cualquier número de asociados presentes.</p>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 22°</span><span class="art-title">Mayorías para Adopción de Acuerdos</span></div>
+    <div class="art-body">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Materia</th><th>Mayoría requerida</th></tr></thead>
+          <tbody>
+            <tr><td>Asuntos ordinarios de gestión</td><td>Mayoría simple (mitad más uno de presentes)</td></tr>
+            <tr><td>Elección de Junta Directiva</td><td>Mayoría simple</td></tr>
+            <tr><td>Aprobación de presupuesto y estados financieros</td><td>Mayoría simple</td></tr>
+            <tr><td>Modificación del Estatuto</td><td>Mayoría calificada: 2/3 de asociados hábiles</td></tr>
+            <tr><td>Exclusión de asociados</td><td>Mayoría calificada: 2/3 de asociados hábiles</td></tr>
+            <tr><td>Fusión, escisión o disolución</td><td>Unanimidad de asociados hábiles</td></tr>
+            <tr><td>Enajenación de bienes inmuebles</td><td>Mayoría calificada: 2/3 de asociados hábiles</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 23°</span><span class="art-title">Atribuciones de la Asamblea General</span></div>
+    <div class="art-body">Son atribuciones exclusivas e indelegables de la Asamblea General: <strong>a)</strong> Elegir y remover a los miembros de la Junta Directiva y la Comisión de Vigilancia. <strong>b)</strong> Aprobar la memoria anual y los estados financieros. <strong>c)</strong> Aprobar el plan operativo y presupuesto anual. <strong>d)</strong> Fijar el monto de las cuotas. <strong>e)</strong> Modificar el Estatuto. <strong>f)</strong> Aprobar la adquisición, enajenación o gravamen de bienes inmuebles. <strong>g)</strong> Acordar la disolución, liquidación, fusión o escisión. <strong>h)</strong> Admitir y excluir asociados. <strong>i)</strong> Resolver recursos de apelación contra decisiones de la Junta Directiva. <strong>j)</strong> Aprobar el Reglamento Interno y sus modificaciones. <strong>k)</strong> Cualquier otra atribución que la ley o el Estatuto le confieran.</div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 24°</span><span class="art-title">Actas</span></div>
+    <div class="art-body">De cada sesión se levantará un acta que consignará: lugar, fecha, hora, lista de asistentes, quórum, orden del día tratado, resumen de deliberaciones, texto íntegro de los acuerdos, resultado de votaciones y firma del Presidente y Secretario. Las actas se registrarán en el Libro de Actas de Asamblea General, legalizado ante notario público.</div>
+  </div>
+
+  <div class="capitulo"><h3>Capítulo II — Junta Directiva</h3></div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 25°</span><span class="art-title">Composición</span></div>
+    <div class="art-body">
+      <p>La Junta Directiva es el órgano ejecutivo de la Asociación. Está integrada por cinco (5) miembros:</p>
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Cargo</th><th>Funciones principales</th></tr></thead>
+          <tbody>
+            <tr><td>Presidente</td><td>Representación legal, dirección ejecutiva</td></tr>
+            <tr><td>Vicepresidente</td><td>Suplencia del Presidente, proyectos estratégicos</td></tr>
+            <tr><td>Secretario</td><td>Actas, comunicaciones, archivo institucional</td></tr>
+            <tr><td>Tesorero</td><td>Gestión financiera, contabilidad, informes económicos</td></tr>
+            <tr><td>Vocal</td><td>Apoyo a todas las áreas, comisiones especiales</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 26°</span><span class="art-title">Requisitos para ser Director</span></div>
+    <div class="art-body"><strong>a)</strong> Ser asociado activo o fundador con mínimo 6 meses de antigüedad. <strong>b)</strong> Estar al día en el pago de cuotas. <strong>c)</strong> No haber sido condenado por delito doloso mediante sentencia firme. <strong>d)</strong> No tener conflicto de interés documentado con los fines de la Asociación. <strong>e)</strong> Aceptar expresamente el cargo.</div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 27°</span><span class="art-title">Período y Renovación</span></div>
+    <div class="art-body">Los miembros son elegidos por <strong>dos (2) años</strong>, con posibilidad de reelección por un período adicional consecutivo. Cumplidos dos períodos consecutivos en el mismo cargo, deberá transcurrir al menos un (1) período antes de poder ser reelegido para el mismo puesto.</div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 28°</span><span class="art-title">Sesiones de la Junta Directiva</span></div>
+    <div class="art-body">Sesionará en forma ordinaria al menos una (1) vez al mes. El quórum es de tres (3) miembros. Los acuerdos se adoptan por mayoría simple; en caso de empate, el Presidente tiene voto dirimente.</div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 29°</span><span class="art-title">Atribuciones de la Junta Directiva</span></div>
+    <div class="art-body"><strong>a)</strong> Ejecutar los acuerdos de la Asamblea General. <strong>b)</strong> Administrar los recursos patrimoniales y financieros. <strong>c)</strong> Contratar y remover al personal remunerado. <strong>d)</strong> Representar a la Asociación ante entidades públicas, privadas y organismos internacionales. <strong>e)</strong> Elaborar y proponer el plan operativo, presupuesto y estados financieros. <strong>f)</strong> Abrir, cerrar y gestionar cuentas bancarias. <strong>g)</strong> Celebrar contratos y convenios hasta por el monto que fije la Asamblea. <strong>h)</strong> Admitir nuevos asociados activos. <strong>i)</strong> Elaborar el Reglamento Interno. <strong>j)</strong> Presentar ante SUNARP, SUNAT y demás entidades los documentos que correspondan.</div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 30°</span><span class="art-title">Presidente</span></div>
+    <div class="art-body">El Presidente es el representante legal con las más amplias facultades conforme al Art. 74.° del Código Procesal Civil. Le corresponde: <strong>a)</strong> Presidir las sesiones de la Asamblea General y la Junta Directiva. <strong>b)</strong> Suscribir contratos, convenios y documentos autorizados. <strong>c)</strong> Expedir los poderes y representaciones necesarias. <strong>d)</strong> Convocar y presidir sesiones ordinarias y extraordinarias.</div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 31°</span><span class="art-title">Tesorero</span></div>
+    <div class="art-body">
+      <p>Responsable de: <strong>a)</strong> Custodiar los fondos y valores. <strong>b)</strong> Llevar al día los libros contables. <strong>c)</strong> Recaudar cuotas e ingresos. <strong>d)</strong> Efectuar los pagos autorizados. <strong>e)</strong> Presentar informes financieros mensuales a la Junta Directiva y el informe anual a la Asamblea General.</p>
+      <p>Las cuentas bancarias requerirán <strong>firma mancomunada del Presidente y el Tesorero</strong> para disposición de fondos superiores al monto que fije el Reglamento Interno.</p>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 32°</span><span class="art-title">Vacancia y Subrogación</span></div>
+    <div class="art-body">El cargo vaca por: <strong>a)</strong> Renuncia aceptada. <strong>b)</strong> Fallecimiento o incapacidad legal. <strong>c)</strong> Ausencia injustificada a 3 sesiones consecutivas o 5 alternas. <strong>d)</strong> Remoción por la Asamblea General. En caso de vacancia del Presidente, asume el Vicepresidente hasta la siguiente Asamblea General.</div>
+  </div>
+
+  <div class="capitulo"><h3>Capítulo III — Comisión de Vigilancia (Órgano de Fiscalización)</h3></div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 33°</span><span class="art-title">Composición y Elección</span></div>
+    <div class="art-body">Integrada por <strong>tres (3) miembros</strong> elegidos por la Asamblea General simultáneamente con la Junta Directiva, por igual período. Sus integrantes no pueden ser miembros de la Junta Directiva ni personal remunerado de la Asociación.</div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 34°</span><span class="art-title">Atribuciones</span></div>
+    <div class="art-body"><strong>a)</strong> Fiscalizar la gestión económica, financiera y administrativa de la Junta Directiva. <strong>b)</strong> Revisar libros contables, estados financieros, contratos y toda la documentación institucional. <strong>c)</strong> Verificar el cumplimiento del Estatuto, reglamentos y acuerdos de la Asamblea General. <strong>d)</strong> Convocar Asamblea General Extraordinaria cuando lo estime necesario. <strong>e)</strong> Presentar informe anual a la Asamblea General. <strong>f)</strong> Denunciar ante la Asamblea General y, de ser el caso, ante las autoridades competentes, las irregularidades que detecte.</div>
+  </div>
+
+  <!-- ═══ TÍTULO VI ═══ -->
+  <div class="titulo">
+    <div class="titulo-box">
+      <span class="titulo-pill">Título VI</span>
+      <h2>Representación Legal y Poderes</h2>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 35°</span><span class="art-title">Representación</span></div>
+    <div class="art-body">La Asociación es representada legalmente por el Presidente de la Junta Directiva, quien podrá otorgar poderes generales y especiales a terceros mediante acuerdo de la Junta Directiva, incluyendo poderes para litigar con las facultades de los artículos 74.° y 75.° del Código Procesal Civil.</div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 36°</span><span class="art-title">Responsabilidad de los Directivos</span></div>
+    <div class="art-body">Los miembros de la Junta Directiva responden solidariamente por los daños y perjuicios que ocasionen con sus actos dolosos o gravemente culposos. El directivo que haya hecho constar su disconformidad con el acuerdo dañoso estará exento de responsabilidad.</div>
+  </div>
+
+  <!-- ═══ TÍTULO VII ═══ -->
+  <div class="titulo">
+    <div class="titulo-box">
+      <span class="titulo-pill">Título VII</span>
+      <h2>Reglamento Interno y Comisiones</h2>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 37°</span><span class="art-title">Reglamento Interno</span></div>
+    <div class="art-body">La Junta Directiva elaborará un Reglamento Interno que regulará los procedimientos de admisión, el régimen de cuotas, el funcionamiento de comisiones, los protocolos de trabajo en el santuario, el uso de las instalaciones y demás aspectos operativos. El Reglamento será aprobado y modificado por la Asamblea General.</div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 38°</span><span class="art-title">Comisiones Especiales</span></div>
+    <div class="art-body">
+      <p>La Junta Directiva podrá crear Comisiones Especiales permanentes o temporales:</p>
+      <div class="comisiones">
+        <div class="com-item"><span class="com-dot"></span>Comisión de Bioconstrucción y Hábitat</div>
+        <div class="com-item"><span class="com-dot"></span>Comisión de Conservación Etnobotánica y Banco de Semillas</div>
+        <div class="com-item"><span class="com-dot"></span>Comisión de Educación y Permacultura</div>
+        <div class="com-item"><span class="com-dot"></span>Comisión de Ceremonialidad y Patrimonio Cultural</div>
+        <div class="com-item"><span class="com-dot"></span>Comisión de Comunicaciones y Relaciones Institucionales</div>
+        <div class="com-item"><span class="com-dot"></span>Comisión de Cooperación Internacional y Proyectos</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ TÍTULO VIII ═══ -->
+  <div class="titulo">
+    <div class="titulo-box">
+      <span class="titulo-pill">Título VIII</span>
+      <h2>Conflicto de Intereses</h2>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 39°</span><span class="art-title">Conflicto de Intereses</span></div>
+    <div class="art-body">Todo asociado o miembro de órgano de gobierno que tenga un interés personal, familiar o económico en un asunto sometido a deliberación deberá declararlo expresamente, abstenerse de votar y retirarse de la sala durante la deliberación. <strong>El incumplimiento de esta obligación es causal de exclusión.</strong></div>
+  </div>
+
+  <!-- ═══ TÍTULO IX ═══ -->
+  <div class="titulo">
+    <div class="titulo-box">
+      <span class="titulo-pill">Título IX</span>
+      <h2>Modificación del Estatuto</h2>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 40°</span><span class="art-title">Procedimiento de Modificación</span></div>
+    <div class="art-body">El Estatuto podrá ser modificado mediante acuerdo de la Asamblea General Extraordinaria convocada específicamente para tal fin, con el voto favorable de no menos de <strong>dos tercios (2/3) de la totalidad de los asociados hábiles</strong>. La propuesta deberá comunicarse a todos los asociados con un mínimo de veinte (20) días de anticipación, adjuntando el texto comparativo. Toda modificación aprobada deberá ser elevada a escritura pública e inscrita en SUNARP.</div>
+  </div>
+
+  <!-- ═══ TÍTULO X ═══ -->
+  <div class="titulo">
+    <div class="titulo-box">
+      <span class="titulo-pill">Título X</span>
+      <h2>Disolución y Liquidación</h2>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 41°</span><span class="art-title">Causales de Disolución</span></div>
+    <div class="art-body"><strong>a)</strong> Acuerdo de la Asamblea General Extraordinaria adoptado por unanimidad de todos los asociados hábiles. <strong>b)</strong> Incapacidad de seguir cumpliendo su objeto social. <strong>c)</strong> Las demás causales establecidas en el Código Civil Peruano.</div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 42°</span><span class="art-title">Proceso de Liquidación</span></div>
+    <div class="art-body">
+      <p>Acordada la disolución, la Asamblea General nombrará una Comisión Liquidadora de tres (3) miembros que procederá a:</p>
+      <p><strong>a)</strong> Inventariar todos los bienes, derechos y obligaciones. <strong>b)</strong> Cobrar los créditos pendientes y pagar las deudas existentes. <strong>c)</strong> El remanente patrimonial <strong>no podrá ser distribuido entre los asociados</strong>. Será transferido íntegramente a una o varias organizaciones sin fines de lucro con objetivos similares, preferentemente dedicadas a la conservación del patrimonio cultural y natural andino en la región de Cusco. <strong>d)</strong> Inscribir la extinción de la persona jurídica en SUNARP.</p>
+    </div>
+  </div>
+
+  <!-- ═══ TÍTULO XI ═══ -->
+  <div class="titulo">
+    <div class="titulo-box">
+      <span class="titulo-pill">Título XI</span>
+      <h2>Disposiciones Complementarias</h2>
+    </div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 43°</span><span class="art-title">Arbitraje</span></div>
+    <div class="art-body">Todo conflicto interno que no pueda resolverse a través de los mecanismos internos será sometido a <strong>arbitraje de derecho</strong> ante el Centro de Arbitraje de la Cámara de Comercio de Cusco, cuyo laudo será definitivo e inapelable, renunciando las partes a la vía judicial ordinaria, salvo los procesos de ejecución del laudo.</div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 44°</span><span class="art-title">Supletoriedad Legal</span></div>
+    <div class="art-body">En todo lo no previsto se aplicarán las disposiciones del <strong>Código Civil Peruano (Arts. 80–98)</strong>, la legislación vigente sobre personas jurídicas sin fines de lucro, las normas del Código Tributario, la Ley General de Sociedades en lo que resulte aplicable por analogía, y los reglamentos que dicte la Asamblea General.</div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 45°</span><span class="art-title">Domicilio Legal y Notificaciones</span></div>
+    <div class="art-body">Para todos los efectos legales, la Asociación tiene su domicilio en el distrito de Pisac, provincia de Calca, departamento de Cusco. Las notificaciones se realizarán al último correo electrónico y dirección física registrados en el padrón de asociados.</div>
+  </div>
+
+  <div class="art">
+    <div class="art-head"><span class="art-num">Art. 46°</span><span class="art-title">Idioma Oficial</span></div>
+    <div class="art-body">El idioma oficial es el <strong>castellano</strong>. Sin perjuicio de ello, la Asociación promoverá el uso del <strong>quechua</strong> en sus actividades culturales, educativas y ceremoniales.</div>
+  </div>
+
+  <!-- ═══ DISPOSICIONES TRANSITORIAS ═══ -->
+  <div class="titulo">
+    <div class="titulo-box">
+      <span class="titulo-pill">Disposiciones</span>
+      <h2>Transitorias</h2>
+    </div>
+  </div>
+
+  <div class="transitoria">
+    <div class="transitoria-title">Disposición Transitoria Primera</div>
+    <div class="transitoria-body">Los asociados fundadores que suscriben el Acta de Constitución integran la primera Junta Directiva por el período inicial de dos (2) años, con los cargos que en dicha Acta se les asignen.</div>
+  </div>
+  <div class="transitoria">
+    <div class="transitoria-title">Disposición Transitoria Segunda</div>
+    <div class="transitoria-body">La primera Comisión de Vigilancia será elegida en la primera Asamblea General Ordinaria que se celebre tras la inscripción de la Asociación en SUNARP.</div>
+  </div>
+  <div class="transitoria">
+    <div class="transitoria-title">Disposición Transitoria Tercera</div>
+    <div class="transitoria-body">El Reglamento Interno deberá ser aprobado por la Asamblea General dentro de los seis (6) meses siguientes a la inscripción registral de la Asociación.</div>
+  </div>
+
+  <!-- ═══ FIRMAS ═══ -->
+  <div class="titulo">
+    <div class="titulo-box">
+      <span class="titulo-pill">Firmas</span>
+      <h2>Firma y Suscripción de Asociados Fundadores</h2>
+    </div>
+  </div>
+
+  <p class="firma-intro">El presente Estatuto es aprobado por los asociados fundadores reunidos en Asamblea de Constitución, celebrada en la ciudad de <strong>Pisac</strong>, provincia de <strong>Calca</strong>, departamento de <strong>Cusco</strong>, República del Perú.</p>
+
+  <div class="tbl-wrap">
+    <table class="tbl-firmas">
+      <thead><tr><th>N.°</th><th>Nombre completo</th><th>DNI</th><th>Cargo inicial</th><th>Firma</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td></td><td></td><td>Presidente</td><td></td></tr>
+        <tr><td>2</td><td></td><td></td><td>Vicepresidente</td><td></td></tr>
+        <tr><td>3</td><td></td><td></td><td>Secretario</td><td></td></tr>
+        <tr><td>4</td><td></td><td></td><td>Tesorero</td><td></td></tr>
+        <tr><td>5</td><td></td><td></td><td>Vocal</td><td></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="firma-fecha" style="margin-top:20px;">
+    Lugar y fecha: Pisac, Cusco, Perú — _______ de ___________________ de 2026
+  </div>
+
+  <!-- Alertas finales -->
+  <div class="alerta dorada" style="margin-top:32px;">
+    <div class="alerta-icon">⚖️</div>
+    <div class="alerta-body">
+      <div class="alerta-title">Para su validez legal</div>
+      Este Estatuto debe ser elevado a <strong>Escritura Pública</strong> ante Notario Público del distrito notarial de Cusco, e inscrito en la <strong>Zona Registral N.° X — Sede Cusco de SUNARP</strong>, en el Libro de Personas Jurídicas — Asociaciones.
+    </div>
+  </div>
+
+  <div class="alerta verde">
+    <div class="alerta-icon">📋</div>
+    <div class="alerta-body">
+      <div class="alerta-title">Documentos necesarios para inscripción en SUNARP</div>
+      <ul style="padding-left:18px;margin-top:6px;">
+        <li>Acta de Constitución y Elección de Junta Directiva (firmada por todos los fundadores)</li>
+        <li>Este Estatuto elevado a Escritura Pública</li>
+        <li>DNI vigente de todos los fundadores</li>
+        <li>Pago de derechos registrales (~S/. 90)</li>
+        <li>Formulario de solicitud de inscripción (disponible en SUNARP)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Footer del documento -->
+  <div class="doc-footer">
+    <div class="df-brand">
+      <div class="df-logo">🌿</div>
+      <div>
+        <div class="df-name">Pampa Ñusta</div>
+        <div class="df-sub">Pisac · Valle Sagrado · Cusco, Perú</div>
+      </div>
+    </div>
+    <div class="df-legal">
+      Asociación Civil Sin Fines de Lucro<br>
+      Código Civil Peruano, Arts. 80–98<br>
+      © 2026 · Documento Fundacional
+    </div>
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>
